@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+require 'optparse'
+require File.expand_path('thyme', File.dirname(__FILE__))
+
+ARGV.options do |o|
+  o.set_summary_indent('  ')
+  o.banner =    "Usage: #{File.basename($0)} [OPTION]"
+  o.define_head "Timer for Pomodoro Technique"
+  o.on('-h', '--help', 'show this help message') { puts o; exit }
+  o.parse!
+  puts o
+end
