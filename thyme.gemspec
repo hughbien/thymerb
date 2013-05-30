@@ -9,6 +9,7 @@ Gem::Specification.new do |s|
   s.description = 'Extensible and configurable timer for Pomodoro Technique.'
  
   s.required_rubygems_version = '>= 1.3.6'
+  s.add_dependency 'ruby-progressbar'
   s.add_development_dependency 'minitest'
  
   s.files        = Dir.glob('*.{rb,md}') + %w(thyme)

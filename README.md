@@ -39,11 +39,11 @@ Thyme is configurable and extensible.  All configurations live in the
     end
 
     before do
-      puts "Get ready, get set, GO!"
+      `tmux set status-interval 1`
     end
 
     after do
-      `mplayer ~/music/wohoo.mp3`
+      `tmux set status-interval 15`
       `vim -O ~/.thyme-today.md`
     end
 
@@ -80,7 +80,6 @@ works if you have tmux integration setup for the countdown:
 TODO
 ====
 
-* add progress bar
 * add `--daemon` switch and `--stop`
 * add config reader
 * add config `set`
