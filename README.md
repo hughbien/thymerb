@@ -80,9 +80,6 @@ works if you have tmux integration setup for the countdown:
 TODO
 ====
 
-* add directory stucture (binary, lib file, tests, Rakefile, gemspec)
-* add `--help`
-* add 25 minute timer
 * add progress bar
 * add `--daemon` switch and `--stop`
 * add config reader
@@ -92,6 +89,7 @@ TODO
 * add config `option`
 * add config `before` and `after`
 * add color to outfile tmux integration (?)
+* look into alternatives for sleep (?)
 
 License
 =======

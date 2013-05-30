@@ -8,5 +8,5 @@ ARGV.options do |o|
   o.define_head "Timer for Pomodoro Technique"
   o.on('-h', '--help', 'show this help message') { puts o; exit }
   o.parse!
-  puts o
+  Thyme.run
 end
