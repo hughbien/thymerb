@@ -5,8 +5,10 @@ class Thyme
   CONFIG_FILE = "#{ENV['HOME']}/.thymerc"
 
   def self.run
-    seconds = 25 * 60 + 1
+    start = 25 * 60
+    seconds = start + 1
     min_length = (seconds / 60).to_s.length
+    outfile = File.open("#{ENV['HOME']}/.thyme-tmux", "w")
     bar = ProgressBar.create(
       title: format(seconds-1, min_length),
       total: seconds,
@@ -14,12 +16,20 @@ class Thyme
       format: '[%B] %t')
     while !bar.finished? && seconds > 0
       seconds -= 1
-      bar.title = self.format(seconds, min_length)
+      title = self.format(seconds, min_length)
+      color = self.color(seconds, start)
+      bar.title = title
       bar.increment
+      outfile.truncate(0)
+      outfile.rewind
+      outfile.write("#[default]#[fg=#{color}]#{title}#[default]")
+      outfile.flush
       sleep(1)
     end
   rescue SignalException => e
     puts ""
+  ensure
+    outfile.close
   end
 
   private
@@ -29,5 +39,9 @@ class Thyme
     sec = seconds % 60
     sec = "0#{sec}" if sec.to_s.length == 1
     "#{lead}#{min}:#{sec}"
+  end
+
+  def self.color(seconds, start)
+    seconds < (5*60) ? 'red,bold' : 'default'
   end
 end

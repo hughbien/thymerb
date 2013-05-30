@@ -2,6 +2,7 @@
 require 'optparse'
 require File.expand_path('thyme', File.dirname(__FILE__))
 
+$0 = 'thyme'
 ARGV.options do |o|
   o.set_summary_indent('  ')
   o.banner =    "Usage: #{File.basename($0)} [OPTION]"
