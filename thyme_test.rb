@@ -6,12 +6,18 @@ Minitest.autorun
 
 class ThymeTest < Minitest::Test
   def setup
+    @thyme = Thyme.new
   end
 
-  def test_setup
-    assert_equal('25:00', Thyme.send(:format, 25*60, 2))
-    assert_equal('24:59', Thyme.send(:format, 25*60-1, 2))
-    assert_equal(' 5:00', Thyme.send(:format, 5*60, 2))
-    assert_equal(' 4:05', Thyme.send(:format, 4*60+5, 2))
+  def test_format
+    assert_equal('25:00', @thyme.send(:format, 25*60, 2))
+    assert_equal('24:59', @thyme.send(:format, 25*60-1, 2))
+    assert_equal(' 5:00', @thyme.send(:format, 5*60, 2))
+    assert_equal(' 4:05', @thyme.send(:format, 4*60+5, 2))
+  end
+
+  def test_color
+    assert_equal('default', @thyme.send(:color, 5*60))
+    assert_equal('red,bold', @thyme.send(:color, 5*60-1))
   end
 end

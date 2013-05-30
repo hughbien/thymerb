@@ -44,7 +44,7 @@ Thyme is configurable and extensible.  All configurations live in the
 
     after do
       `tmux set status-interval 60`
-      `vim -O ~/.thyme-today.md`
+      `notify-send -u critical "0:00 - End of session"`
     end
 
 The `set` method sets different configurations.  There are only two:
@@ -81,7 +81,6 @@ works if you have tmux integration setup for the countdown:
 TODO
 ====
 
-* add `--daemon` switch and `--stop`
 * add config reader
 * add config `set`
 * add `set :timer`
@@ -89,9 +88,11 @@ TODO
 * add tmux color and critical time threshold options
 * add config `option`
 * add config `before` and `after`
-* figure out after hook with tmux set interval integration
+* add libnotify integration (?)
+* figure out after hook with tmux set interval integration (hooks with arg?)
 * figure out how to remove tmux file on stop (-d vs normal)
 * look into alternatives for sleep (?)
+* calculate time via delta instead of counter
 
 License
 =======
