@@ -72,13 +72,18 @@ class Thyme
     @after = block
   end
 
-  def load_config
+  def option(optparse, short, long, desc, &block)
+    optparse.on("-#{short}", "--#{long}", desc) { block.call; exit }
+  end
+
+  def load_config(optparse)
     return if !File.exists?(CONFIG_FILE)
     app = self
     Object.class_eval do
-      define_method(:set) { |opt, val| app.set(opt, val) }
+      define_method(:set) { |opt,val| app.set(opt,val) }
       define_method(:before) { |&block| app.before(&block) }
       define_method(:after) { |&block| app.after(&block) }
+      define_method(:option) { |sh,lo,desc,&b| app.option(optparse,sh,lo,desc,&b) }
     end
     load(CONFIG_FILE, true)
   end

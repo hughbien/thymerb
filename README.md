@@ -34,8 +34,8 @@ Thyme is configurable and extensible.  All configurations live in the
     set :timer, 25
     set :tmux, true
 
-    option :o, :open, 'opens today & records sheets' do
-      `vim -O ~/.thyme-today.md ~/.thyme-records.md`
+    option :o, :open, 'open sheets' do
+      `vim -O ~/.thyme-today.md ~/.thyme-records.md < \`tty\` > \`tty\``
     end
 
     before do
@@ -43,7 +43,7 @@ Thyme is configurable and extensible.  All configurations live in the
     end
 
     after do
-      `notify-send -u critical "0:00 End Of Session"`
+      `notify-send -u critical "0:00 Thymes Up!"`
     end
 
 The `set` method sets different configurations.  There are only two:
@@ -79,12 +79,8 @@ works if you have tmux integration setup for the countdown:
 TODO
 ====
 
-* add config `option`
-* add libnotify integration (?)
-* figure out after hook with tmux set interval integration (hooks with arg?)
-* figure out how to remove tmux file on stop (-d vs normal)
-* look into alternatives for sleep (?)
 * calculate time via delta instead of counter
+* look into alternatives for sleep (?)
 
 License
 =======
