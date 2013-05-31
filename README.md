@@ -73,14 +73,8 @@ Then in your `.tmux.conf` file:
 For vim integration, I like to execute `thyme -d` to toggle the timer.  This only
 works if you have tmux integration setup for the countdown:
 
-    nmap <leader>t :!thyme -d
-    nmap <leader>T :!thyme -s
-
-TODO
-====
-
-* calculate time via delta instead of counter
-* look into alternatives for sleep (?)
+    nmap <leader>t :!thyme -d<cr>
+    nmap <leader>T :!thyme -s<cr>
 
 License
 =======

@@ -1,4 +1,5 @@
 require 'ruby-progressbar'
+require 'date'
 
 class Thyme
   VERSION = '0.0.1'
@@ -15,8 +16,9 @@ class Thyme
   def run
     @before.call if @before
     start = @timer * 60
+    start_time = DateTime.now
     seconds = start + 1
-    min_length = (seconds / 60).to_s.length
+    min_length = (seconds / 60).floor.to_s.length
     tmux_file = File.open(TMUX_FILE, "w")
     bar = ProgressBar.create(
       title: format(seconds-1, min_length),
@@ -24,7 +26,7 @@ class Thyme
       length: 50,
       format: '[%B] %t')
     while !bar.finished? && seconds > 0
-      seconds -= 1
+      seconds = start - seconds_since(start_time)
       title = format(seconds, min_length)
       fg = color(seconds)
       bar.title = title
@@ -41,7 +43,7 @@ class Thyme
     puts ""
   ensure
     tmux_file.close
-    @after.call if @after
+    @after.call if @after && seconds <= 0
     stop
   end
 
@@ -49,8 +51,8 @@ class Thyme
     File.delete(TMUX_FILE) if File.exists?(TMUX_FILE)
     if File.exists?(PID_FILE)
       pid = File.read(PID_FILE).to_i
-      Process.kill('TERM', pid) if pid > 1
       File.delete(PID_FILE)
+      Process.kill('TERM', pid) if pid > 1
     end
   end
 
@@ -89,10 +91,14 @@ class Thyme
   end
 
   private
+  def seconds_since(time)
+    ((DateTime.now - time) * 24 * 60 * 60).to_i
+  end
+
   def format(seconds, min_length)
-    min = seconds / 60
+    min = (seconds / 60).floor
     lead = ' ' * (min_length - min.to_s.length)
-    sec = seconds % 60
+    sec = (seconds % 60).floor
     sec = "0#{sec}" if sec.to_s.length == 1
     "#{lead}#{min}:#{sec}"
   end
