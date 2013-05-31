@@ -32,40 +32,38 @@ Thyme is configurable and extensible.  All configurations live in the
 `~/.thymerc` file:
 
     set :timer, 25
-    set :tmux, "~/.thyme-tmux"
+    set :tmux, true
 
     option :o, :open, 'opens today & records sheets' do
       `vim -O ~/.thyme-today.md ~/.thyme-records.md`
     end
 
     before do
-      `tmux set status-interval 1`
+      `mplayer ~/music/flight-of-the-bumble-bee.mp3 &`
     end
 
     after do
-      `tmux set status-interval 60`
-      `notify-send -u critical "0:00 - End of session"`
+      `notify-send -u critical "0:00 End Of Session"`
     end
 
 The `set` method sets different configurations.  There are only two:
 
 * `:timer` is the number of minutes to countdown from
-* `:tmux` is the file to write out progress to for tmux integration
+* `:tmux` is whether or not you want tmux integration on (off by default)
 
 The `option` method adds new options to the `thyme` command.  In the above
 example, we can now execute `thyme -o`.  Use `thyme -h` to see available
 options.
 
 The `before` and `after` adds hooks to our timer.  Now before the timer starts,
-STDOUT will receive a message.  After the timer ends, vim will open our today
-sheet.
+an mp3 will play.  After the timer ends, a notification will be sent.
 
 Integration
 ===========
 
 For tmux integration, make sure to set the `:tmux` option in `~/.thymerc`:
 
-    set :tmux, "~/.thyme-tmux"
+    set :tmux, true
 
 Then in your `.tmux.conf` file:
 
@@ -81,10 +79,8 @@ works if you have tmux integration setup for the countdown:
 TODO
 ====
 
-* add `set :tmux`
-* add tmux color and critical time threshold options
-* add config `option`
 * add config `before` and `after`
+* add config `option`
 * add libnotify integration (?)
 * figure out after hook with tmux set interval integration (hooks with arg?)
 * figure out how to remove tmux file on stop (-d vs normal)

@@ -5,10 +5,11 @@ class Thyme
   CONFIG_FILE = "#{ENV['HOME']}/.thymerc"
   PID_FILE = "#{ENV['HOME']}/.thyme-pid"
   TMUX_FILE = "#{ENV['HOME']}/.thyme-tmux"
-  OPTIONS = [:timer]
+  OPTIONS = [:timer, :tmux]
 
   def initialize
     @timer = 25
+    @tmux = false
   end
 
   def run
@@ -27,16 +28,19 @@ class Thyme
       fg = color(seconds)
       bar.title = title
       bar.increment
-      tmux_file.truncate(0)
-      tmux_file.rewind
-      tmux_file.write("#[default]#[fg=#{fg}]#{title}#[default]")
-      tmux_file.flush
+      if @tmux
+        tmux_file.truncate(0)
+        tmux_file.rewind
+        tmux_file.write("#[default]#[fg=#{fg}]#{title}#[default]")
+        tmux_file.flush
+      end
       sleep(1)
     end
   rescue SignalException => e
     puts ""
   ensure
     tmux_file.close
+    stop
   end
 
   def stop
