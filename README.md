@@ -81,9 +81,6 @@ works if you have tmux integration setup for the countdown:
 TODO
 ====
 
-* add config reader
-* add config `set`
-* add `set :timer`
 * add `set :tmux`
 * add tmux color and critical time threshold options
 * add config `option`

@@ -20,4 +20,11 @@ class ThymeTest < Minitest::Test
     assert_equal('default', @thyme.send(:color, 5*60))
     assert_equal('red,bold', @thyme.send(:color, 5*60-1))
   end
+
+  def test_set
+    assert_equal(25, @thyme.instance_variable_get('@timer'))
+    @thyme.set(:timer, 20)
+    assert_equal(20, @thyme.instance_variable_get('@timer'))
+    assert_raises(ThymeError) { @thyme.set(:invalid, nil) }
+  end
 end

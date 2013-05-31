@@ -5,9 +5,14 @@ class Thyme
   CONFIG_FILE = "#{ENV['HOME']}/.thymerc"
   PID_FILE = "#{ENV['HOME']}/.thyme-pid"
   TMUX_FILE = "#{ENV['HOME']}/.thyme-tmux"
+  OPTIONS = [:timer]
+
+  def initialize
+    @timer = 25
+  end
 
   def run
-    start = 25 * 60
+    start = @timer * 60
     seconds = start + 1
     min_length = (seconds / 60).to_s.length
     tmux_file = File.open(TMUX_FILE, "w")
@@ -48,6 +53,20 @@ class Thyme
     File.open(PID_FILE, "w") { |f| f.print(Process.pid) }
   end
 
+  def set(opt, val)
+    raise ThymeError.new("Invalid option: #{opt}") if !OPTIONS.include?(opt.to_sym)
+    self.instance_variable_set("@#{opt}", val)
+  end
+
+  def load_config
+    return if !File.exists?(CONFIG_FILE)
+    app = self
+    Object.class_eval do
+      define_method(:set) { |opt, val| app.set(opt, val) }
+    end
+    load(CONFIG_FILE, true)
+  end
+
   private
   def format(seconds, min_length)
     min = seconds / 60
@@ -61,3 +80,5 @@ class Thyme
     seconds < (5*60) ? 'red,bold' : 'default'
   end
 end
+
+class ThymeError < StandardError; end;
