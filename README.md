@@ -79,7 +79,6 @@ works if you have tmux integration setup for the countdown:
 TODO
 ====
 
-* add config `before` and `after`
 * add config `option`
 * add libnotify integration (?)
 * figure out after hook with tmux set interval integration (hooks with arg?)

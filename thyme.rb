@@ -13,6 +13,7 @@ class Thyme
   end
 
   def run
+    @before.call if @before
     start = @timer * 60
     seconds = start + 1
     min_length = (seconds / 60).to_s.length
@@ -40,11 +41,12 @@ class Thyme
     puts ""
   ensure
     tmux_file.close
+    @after.call if @after
     stop
   end
 
   def stop
-    File.delete(TMUX_FILE)
+    File.delete(TMUX_FILE) if File.exists?(TMUX_FILE)
     if File.exists?(PID_FILE)
       pid = File.read(PID_FILE).to_i
       Process.kill('TERM', pid) if pid > 1
@@ -62,11 +64,21 @@ class Thyme
     self.instance_variable_set("@#{opt}", val)
   end
 
+  def before(&block)
+    @before = block
+  end
+
+  def after(&block)
+    @after = block
+  end
+
   def load_config
     return if !File.exists?(CONFIG_FILE)
     app = self
     Object.class_eval do
       define_method(:set) { |opt, val| app.set(opt, val) }
+      define_method(:before) { |&block| app.before(&block) }
+      define_method(:after) { |&block| app.after(&block) }
     end
     load(CONFIG_FILE, true)
   end
