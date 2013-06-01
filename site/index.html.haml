@@ -48,25 +48,6 @@
           Or check out <a href="https://github.com/hughbien/thyme">Thyme's source code on GitHub</a>.
 
       .feature
-        %h3 Daemon Mode
-
-        %pre
-          %code
-            = preserve do
-              :plain
-                <strong class="prompt">$</strong> thyme -d
-                <strong class="prompt">$</strong> thyme -s
-                <strong class="prompt">$</strong> vim ~/.vimrc
-                nmap &lt;leader&gt;t :!thyme -d&lt;cr&gt;
-                nmap &lt;leader&gt;t :!thyme -s&lt;cr&gt;
-
-        %p
-          Let Thyme run in the background while you finish
-          your work with <code>-d</code>.
-          Cancel a Pomodoro at any time with <code>-s</code>.
-          Both commands integrate quite nicely into most editors.
-
-      .feature
         %h3 Tmux Integration
 
         %pre
@@ -107,6 +88,25 @@
           in your <code>~/.thymerc</code> file.
 
       .feature
+        %h3 Editor Integration
+
+        %pre
+          %code
+            = preserve do
+              :plain
+                <strong class="prompt">$</strong> thyme -d
+                <strong class="prompt">$</strong> thyme -s
+                <strong class="prompt">$</strong> vim ~/.vimrc
+                nmap &lt;leader&gt;t :!thyme -d&lt;cr&gt;
+                nmap &lt;leader&gt;t :!thyme -s&lt;cr&gt;
+
+        %p
+          Let Thyme run as a daemon while you finish
+          your work with <code>-d</code>.
+          Stop a Pomodoro at any time with <code>-s</code>.
+          Both commands integrate nicely into most editors.
+
+      .feature
         %h3 Extend It
 
         %pre
@@ -117,6 +117,8 @@
                 option :t, :today, 'open today sheet' do
                   `vim ~/.thyme_today.md < \`tty\` > \`tty\``
                 end
+                <strong class="prompt">$</strong> thyme -h | grep today
+                -t, --today         open today sheet
 
         %p
           Thyme is just a basic timer.  But you can add functionality with Ruby.
