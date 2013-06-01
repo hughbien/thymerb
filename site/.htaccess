@@ -1,0 +1,31 @@
+RequestHeader unset X-Forwarded-Host
+RewriteEngine on
+RewriteBase /
+
+RewriteCond %{REQUEST_URI} ^/favicon\.ico|/.*\.png|/.*\.jpg|/.*\.css|.*\.js$
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule (.*) $1 [L]
+
+RewriteCond %{HTTP_HOST} ^.*\.thymerb.com$
+RewriteRule (.*) http://thymerb.com/$1 [R=permanent,L]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_URI} !(.*)/$
+RewriteRule ^(.*)$ http://thymerb.com/$1/ [R=permanent,L] 
+
+AddType application/vnd.ms-fontobject .eot
+AddType application/font-woff .woff
+AddType font/ttf .ttf
+AddType image/svg+xml .svg
+
+ExpiresActive On
+ExpiresByType image/png A31536000
+ExpiresByType image/jpg A31536000
+ExpiresByType image/x-icon A31536000
+ExpiresByType application/vnd.ms-fontobject A31536000
+ExpiresByType application/font-woff A31536000
+ExpiresByType font/ttf A31536000
+ExpiresByType image/svg+xml A31536000
+ExpiresByType application/javascript A31536000
+ExpiresByType text/css A31536000
+ExpiresByType text/html A3600
