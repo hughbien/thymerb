@@ -14,7 +14,7 @@ Usage
 Start thyme with:
 
     $ thyme
-    [===                    ] 24:59
+    [=                                        ] 24:59
 
 You'll have 25 minutes by default.  `Ctrl-C` to interrupt.  You can also start
 it in daemon mode, which is only useful if you've got tmux integration to notify

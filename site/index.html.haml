@@ -1,0 +1,128 @@
+!!! 5
+%html
+  %head
+    %title= 'Thyme - Console Pomodoro Timer'
+    %link(rel='stylesheet' href='/all.css' media='all')
+    %link(rel='shortcut icon' href='/favicon.ico' type='image/vnd.microsoft.icon')
+    %meta(charset='utf-8')
+    %meta(name='viewport' content='initial-scale=1.0,width=device-width')
+    %meta(name='description' content='Thyme is a console Pomodoro timer with support for tmux integration, extensibility, and hooks.')
+  %body
+    #canvas
+      .frame
+        %h1 Thyme &mdash; the console Pomodoro timer
+        %h2 with tmux integration and pre/post hooks
+
+        #console
+          %h3 thyme.rb
+          %pre
+            %code
+              = preserve do
+                :plain
+                  <strong class="prompt">$</strong> gem install thyme
+                  Successfully installed thyme
+                  1 gem installed
+
+                  <strong class="prompt">$</strong> thyme -h
+                  Usage: thyme [OPTION]
+                  Timer for Pomodoro Technique
+                  -d, --daemon                run in background
+                  -h, --help                  show this help message
+                  -s, --stop                  stop timer
+
+                  <strong class="prompt">$</strong> thyme
+                  [========================================  ]  4:42
+          .tmux
+            %pre
+              %code
+                0:thyme* 1:vim- <strong class="right">4:42</strong>
+
+    .frame
+      .about
+        %p
+          The <a href="#">Pomodoro Technique</a> is time management
+          method developed by Francesco Cirillo.
+          Learn more about it via Staffan Nöteberg's
+          <a href="#">Pomodoro Technique Illustrated</a>.
+          Or check out <a href="#">Thyme's source code on GitHub</a>.
+
+      .feature
+        %h3 Daemon Mode
+
+        %pre
+          %code
+            = preserve do
+              :plain
+                <strong class="prompt">$</strong> thyme -d
+                <strong class="prompt">$</strong> thyme -s
+                <strong class="prompt">$</strong> vim ~/.vimrc
+                nmap &lt;leader&gt;t :!thyme -d&lt;cr&gt;
+                nmap &lt;leader&gt;t :!thyme -s&lt;cr&gt;
+
+        %p
+          Let Thyme run in the background while you finish
+          your work with <code>-d</code>.
+          Cancel a Pomodoro at any time with <code>-s</code>.
+          Both commands integrate quite nicely into most editors.
+
+      .feature
+        %h3 Tmux Integration
+
+        %pre
+          %code
+            = preserve do
+              :plain
+                <strong class="prompt">$</strong> vim ~/.thymerc
+                set :tmux, true
+
+                <strong class="prompt">$</strong> vim ~/.tmux.conf
+                set-option -g status-right '#(cat ~/.thyme-tmux)'
+                set-option -g status-interval 1
+
+        %p
+          Just turn on tmux integration in the <code>~/.thymerc</code>
+          file.  Now you'll always have your countdown available.  It even turns
+          <strong class="red">red</strong> in the last 5 minutes of a Pomodoro.
+
+      .feature
+        %h3 Pre &amp; Post Hooks
+
+        %pre
+          %code
+            = preserve do
+              :plain
+                <strong class="prompt">$</strong> vim ~/.thymerc
+                before do
+                  `mplayer ~/flight-of-the-bumble-bee.mp3 &`
+                end
+                after do
+                  `notify-send -u critical "0:00 Thyme's up!"`
+                end
+
+        %p
+          Want to play music or turn off wifi before a Pomodoro session?
+          How about a <strong class="red">libnotify or Growl</strong> alert
+          at the end of a session?  It's all possible using using Ruby code
+          in your <code>~/.thymerc</code> file.
+
+      .feature
+        %h3 Extend It
+
+        %pre
+          %code
+            = preserve do
+              :plain
+                <strong class="prompt">$</strong> vim ~/.thymerc
+                option :t, :today, 'open today sheet' do
+                  `vim ~/.thyme_today.md < \`tty\` > \`tty\``
+                end
+
+        %p
+          Thyme is just a basic timer.  But you can add functionality with Ruby.
+          Extend it to handle your Pomodoro related actions, like opening up
+          your todo today sheet.
+
+      .about
+        %p
+          Thyme is released under the <a href="#">MIT License</a> and developed by
+          <a href="#">Hugh Bien</a>.  Follow me via <a href="#">@hughbien</a>.
