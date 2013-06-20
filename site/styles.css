@@ -53,4 +53,5 @@ pre .prompt { color: #0f0; }
   .feature pre { float: none; width: 97%; margin: 0 0 10px; padding-right: 0; padding-left: 3%; }
   .feature h3 { text-align: center; font-size: 1.5em; }
   .feature h3, .feature p { margin-left: 0; }
+  .desktop-only { display: none; }
 }
