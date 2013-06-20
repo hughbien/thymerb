@@ -24,7 +24,7 @@ class Thyme
     tmux_file = File.open(TMUX_FILE, "w")
     bar = ProgressBar.create(
       title: format(seconds-1, min_length),
-      total: seconds,
+      total: @seconds ? seconds : @timer.floor,
       length: 50,
       format: '[%B] %t')
     while !bar.finished? && seconds > 0
