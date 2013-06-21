@@ -6,12 +6,12 @@ class Thyme
   CONFIG_FILE = "#{ENV['HOME']}/.thymerc"
   PID_FILE = "#{ENV['HOME']}/.thyme-pid"
   TMUX_FILE = "#{ENV['HOME']}/.thyme-tmux"
-  OPTIONS = [:timer, :tmux, :seconds]
+  OPTIONS = [:timer, :tmux, :interval]
 
   def initialize
     @timer = 25
     @tmux = false
-    @seconds = true
+    @interval = 1
   end
 
   def run
@@ -19,7 +19,6 @@ class Thyme
     seconds_start = @timer * 60
     seconds_left = seconds_start + 1
     start_time = DateTime.now
-    delta = @seconds ? 1 : 60
     min_length = (seconds_left / 60).floor.to_s.length
     tmux_file = File.open(TMUX_FILE, "w")
     bar = ProgressBar.create(
@@ -40,7 +39,7 @@ class Thyme
         tmux_file.write("#[default]#[fg=#{fg}]#{title}#[default]")
         tmux_file.flush
       end
-      sleep(delta)
+      sleep(@interval)
     end
   rescue SignalException => e
     puts ""
@@ -104,7 +103,7 @@ class Thyme
     lead = ' ' * (min_length - min.to_s.length)
     sec = (seconds % 60).floor
     sec = "0#{sec}" if sec.to_s.length == 1
-    @seconds ?
+    @interval < 60 ?
       "#{lead}#{min}:#{sec}" :
       "#{lead}#{min}m"
   end
