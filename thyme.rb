@@ -15,7 +15,7 @@ class Thyme
   end
 
   def run
-    @before.call if @before
+    before_hook = @before
     seconds_start = @timer
     seconds_left = seconds_start + 1
     start_time = DateTime.now
@@ -39,15 +39,19 @@ class Thyme
         tmux_file.write("#[default]#[fg=#{fg}]#{title}#[default]")
         tmux_file.flush
       end
+      if before_hook
+        before_hook.call
+        before_hook = nil
+      end
       sleep(@interval)
     end
   rescue SignalException => e
     puts ""
   ensure
     tmux_file.close
+    stop
     seconds_left = [seconds_start - seconds_since(start_time), 0].max
     @after.call(seconds_left) if @after
-    stop
   end
 
   def stop

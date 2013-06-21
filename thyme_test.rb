@@ -22,9 +22,9 @@ class ThymeTest < Minitest::Test
   end
 
   def test_set
-    assert_equal(25, @thyme.instance_variable_get('@timer'))
-    @thyme.set(:timer, 20)
-    assert_equal(20, @thyme.instance_variable_get('@timer'))
+    assert_equal(25*60, @thyme.instance_variable_get('@timer'))
+    @thyme.set(:timer, 20*60)
+    assert_equal(20*60, @thyme.instance_variable_get('@timer'))
     assert_raises(ThymeError) { @thyme.set(:invalid, nil) }
   end
 end
