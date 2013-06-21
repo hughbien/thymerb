@@ -16,23 +16,24 @@ class Thyme
 
   def run
     @before.call if @before
-    start = @timer * 60
+    seconds_start = @timer * 60
+    seconds_left = seconds_start + 1
     start_time = DateTime.now
-    seconds = start + 1
     delta = @seconds ? 1 : 60
-    min_length = (seconds / 60).floor.to_s.length
+    min_length = (seconds_left / 60).floor.to_s.length
     tmux_file = File.open(TMUX_FILE, "w")
     bar = ProgressBar.create(
-      title: format(seconds-1, min_length),
-      total: @seconds ? seconds : @timer.floor,
+      title: format(seconds_left-1, min_length),
+      total: seconds_start,
       length: 50,
       format: '[%B] %t')
-    while !bar.finished? && seconds > 0
-      seconds = start - seconds_since(start_time)
-      title = format(seconds, min_length)
-      fg = color(seconds)
+    while seconds_left > 0
+      seconds_passed = seconds_since(start_time)
+      seconds_left = seconds_start - seconds_passed
+      title = format(seconds_left, min_length)
+      fg = color(seconds_left)
       bar.title = title
-      bar.increment
+      bar.progress = seconds_passed
       if @tmux
         tmux_file.truncate(0)
         tmux_file.rewind
@@ -45,7 +46,7 @@ class Thyme
     puts ""
   ensure
     tmux_file.close
-    @after.call if @after && seconds <= 0
+    @after.call if @after && seconds_left <= 0
     stop
   end
 
@@ -98,6 +99,7 @@ class Thyme
   end
 
   def format(seconds, min_length)
+    seconds = [0, seconds].max
     min = (seconds / 60).floor
     lead = ' ' * (min_length - min.to_s.length)
     sec = (seconds % 60).floor
