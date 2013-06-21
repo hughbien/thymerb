@@ -28,7 +28,7 @@ class Thyme
       format: '[%B] %t')
     while seconds_left > 0
       seconds_passed = seconds_since(start_time)
-      seconds_left = seconds_start - seconds_passed
+      seconds_left = [seconds_start - seconds_passed, 0].max
       title = format(seconds_left, min_length)
       fg = color(seconds_left)
       bar.title = title
@@ -45,7 +45,8 @@ class Thyme
     puts ""
   ensure
     tmux_file.close
-    @after.call if @after && seconds_left <= 0
+    seconds_left = [seconds_start - seconds_since(start_time), 0].max
+    @after.call(seconds_left) if @after
     stop
   end
 
@@ -98,7 +99,6 @@ class Thyme
   end
 
   def format(seconds, min_length)
-    seconds = [0, seconds].max
     min = (seconds / 60).floor
     lead = ' ' * (min_length - min.to_s.length)
     sec = (seconds % 60).floor

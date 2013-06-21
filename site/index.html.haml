@@ -77,8 +77,8 @@
                 before do
                   `mplayer ~/flight-of-the-bumble-bee.mp3 &`
                 end
-                after do
-                  `notify-send -u critical "0:00 Thyme's up!"`
+                after do |seconds_left|
+                  `notify-send -u critical "Thyme's up!"`
                 end
 
         %p

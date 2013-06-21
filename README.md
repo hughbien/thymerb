@@ -43,8 +43,8 @@ Thyme is configurable and extensible.  All configurations live in the
       `mplayer ~/music/flight-of-the-bumble-bee.mp3 &`
     end
 
-    after do
-      `notify-send -u critical "0:00 Thymes Up!"`
+    after do |seconds_left|
+      `notify-send -u critical "Thymes Up!"` if seconds_left == 0
     end
 
 The `set` method sets different configurations.  There are only two:
