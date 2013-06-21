@@ -9,14 +9,14 @@ class Thyme
   OPTIONS = [:timer, :tmux, :interval]
 
   def initialize
-    @timer = 25
+    @timer = 25 * 60
     @tmux = false
     @interval = 1
   end
 
   def run
     @before.call if @before
-    seconds_start = @timer * 60
+    seconds_start = @timer
     seconds_left = seconds_start + 1
     start_time = DateTime.now
     min_length = (seconds_left / 60).floor.to_s.length

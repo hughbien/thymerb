@@ -31,9 +31,9 @@ Configure
 Thyme is configurable and extensible.  All configurations live in the
 `~/.thymerc` file:
 
-    set :timer, 25
-    set :tmux, true
+    set :timer, 25*60
     set :interval, 1
+    set :tmux, true
 
     option :o, :open, 'open sheets' do
       `vim -O ~/.thyme-today.md ~/.thyme-records.md < \`tty\` > \`tty\``
@@ -49,9 +49,9 @@ Thyme is configurable and extensible.  All configurations live in the
 
 The `set` method sets different configurations.  There are only two:
 
-* `:timer` is the number of minutes to countdown from
-* `:tmux` is whether or not you want tmux integration on (off by default)
+* `:timer` is the number of seconds to countdown from
 * `:interval` is the refresh rate of the progress bar and tmux status in seconds
+* `:tmux` is whether or not you want tmux integration on (off by default)
 
 The `option` method adds new options to the `thyme` command.  In the above
 example, we can now execute `thyme -o`.  Use `thyme -h` to see available
