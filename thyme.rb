@@ -2,7 +2,7 @@ require 'ruby-progressbar'
 require 'date'
 
 class Thyme
-  VERSION = '0.0.6'
+  VERSION = '0.0.7'
   CONFIG_FILE = "#{ENV['HOME']}/.thymerc"
   PID_FILE = "#{ENV['HOME']}/.thyme-pid"
   TMUX_FILE = "#{ENV['HOME']}/.thyme-tmux"
