@@ -49,18 +49,17 @@ class Thyme
     puts ""
   ensure
     tmux_file.close
-    stop
+    File.delete(TMUX_FILE) if File.exists?(TMUX_FILE)
+    File.delete(PID_FILE) if File.exists?(PID_FILE)
     seconds_left = [seconds_start - seconds_since(start_time), 0].max
     @after.call(seconds_left) if @after
   end
 
   def stop
-    File.delete(TMUX_FILE) if File.exists?(TMUX_FILE)
-    if File.exists?(PID_FILE)
-      pid = File.read(PID_FILE).to_i
-      File.delete(PID_FILE)
-      Process.kill('TERM', pid) if pid > 1
-    end
+    return if !File.exists?(PID_FILE)
+    pid = File.read(PID_FILE).to_i
+    File.delete(PID_FILE)
+    Process.kill('TERM', pid) if pid > 1
   end
 
   def daemonize!
