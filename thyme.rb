@@ -12,6 +12,7 @@ class Thyme
     @timer = 25 * 60
     @tmux = false
     @interval = 1
+    @tmux_theme = "#[default]#[fg=%s]%s#[default]" 
   end
 
   def run
@@ -36,7 +37,7 @@ class Thyme
       if @tmux
         tmux_file.truncate(0)
         tmux_file.rewind
-        tmux_file.write("#[default]#[fg=#{fg}]#{title}#[default]")
+        tmux_file.write(tmux_theme % [fg, title])
         tmux_file.flush
       end
       if before_hook

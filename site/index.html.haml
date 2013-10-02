@@ -61,6 +61,8 @@
                 set-option -g status-right '#(cat ~/.thyme-tmux)'
                 set-option -g status-interval 1
 
+                set: tmux_theme "#[fg=mycolor,bg=mycolor]#[fg=%s]%s#[fg=mycolor,bg=mycolor]"
+
         %p
           Just turn on tmux integration in the <code>~/.thymerc</code>
           file.  Now you'll always have your countdown available.  It even turns
