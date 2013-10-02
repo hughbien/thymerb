@@ -37,7 +37,7 @@ class Thyme
       if @tmux
         tmux_file.truncate(0)
         tmux_file.rewind
-        tmux_file.write(tmux_theme % [fg, title])
+        tmux_file.write(@tmux_theme % [fg, title])
         tmux_file.flush
       end
       if before_hook
