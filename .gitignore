@@ -2,3 +2,4 @@
 *.gem
 Gemfile.lock
 site/public
+site/.sass-cache
