@@ -41,7 +41,7 @@ class Thyme
         tmux_file.flush
       end
       if before_hook
-        before_hook.call
+        self.instance_exec(&before_hook)
         before_hook = nil
       end
       sleep(@interval)
@@ -53,7 +53,7 @@ class Thyme
     File.delete(TMUX_FILE) if File.exists?(TMUX_FILE)
     File.delete(PID_FILE) if File.exists?(PID_FILE)
     seconds_left = [seconds_start - seconds_since(start_time), 0].max
-    @after.call(seconds_left) if @after
+    self.instance_exec(seconds_left, &@after) if @after
   end
 
   def stop
@@ -82,7 +82,7 @@ class Thyme
   end
 
   def option(optparse, short, long, desc, &block)
-    optparse.on("-#{short}", "--#{long}", desc) { block.call; exit }
+    optparse.on("-#{short}", "--#{long}", desc) { self.instance_exec(&block); exit }
   end
 
   def load_config(optparse)

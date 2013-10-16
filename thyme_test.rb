@@ -6,7 +6,10 @@ Minitest.autorun
 
 class ThymeTest < Minitest::Test
   def setup
+    # TODO: stub out progress bar
     @thyme = Thyme.new
+    @thyme.set(:interval, 0)
+    @thyme.set(:timer, 0)
   end
 
   def test_format
@@ -22,9 +25,23 @@ class ThymeTest < Minitest::Test
   end
 
   def test_set
-    assert_equal(25*60, @thyme.instance_variable_get('@timer'))
+    assert_equal(0, @thyme.instance_variable_get('@timer'))
     @thyme.set(:timer, 20*60)
     assert_equal(20*60, @thyme.instance_variable_get('@timer'))
     assert_raises(ThymeError) { @thyme.set(:invalid, nil) }
+  end
+
+  def test_run
+    @thyme.run
+  end
+
+  def test_hooks
+    @thyme.before { @before_flag = true }
+    @thyme.after { @after_flag = true }
+    refute(@thyme.instance_variable_get('@before_flag'))
+    refute(@thyme.instance_variable_get('@after_flag'))
+    @thyme.run
+    assert(@thyme.instance_variable_get('@before_flag'))
+    assert(@thyme.instance_variable_get('@after_flag'))
   end
 end
