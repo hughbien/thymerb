@@ -36,7 +36,12 @@ Thyme is configurable and extensible.  All configurations live in the
     set :tmux, true
     set :tmux_theme "#[fg=mycolor,bg=mycolor]#[fg=%s]%s#[fg=mycolor,bg=mycolor]"
 
-    option :o, :open, 'open sheets' do
+    option :b, :break, 'start a break' do
+      set :timer, 5*60
+      run
+    end
+
+    option :t, :today, 'open today sheet' do
       `vim -O ~/.thyme-today.md ~/.thyme-records.md < \`tty\` > \`tty\``
     end
 
@@ -55,8 +60,8 @@ The `set` method sets different configurations.  There are only two:
 * `:tmux` is whether or not you want tmux integration on (off by default)
 
 The `option` method adds new options to the `thyme` command.  In the above
-example, we can now execute `thyme -o`.  Use `thyme -h` to see available
-options.
+example, we can now execute `thyme -b` or `thyme -t`.  Use `thyme -h` to see
+available options.
 
 The `before` and `after` adds hooks to our timer.  Now before the timer starts,
 an mp3 will play.  After the timer ends, a notification will be sent.

@@ -116,16 +116,21 @@
             = preserve do
               :plain
                 <strong class="prompt">$</strong> vim ~/.thymerc
+                option :b, :break, 'start a break' do
+                  set :timer, 5*60
+                  run
+                end
                 option :t, :today, 'open today sheet' do
                   `vim ~/.thyme_today.md < \`tty\` > \`tty\``
                 end
-                <strong class="prompt">$</strong> thyme -h | grep today
+                <strong class="prompt">$</strong> thyme -h | grep 'break\|today'
+                -b, --break         start a break
                 -t, --today         open today sheet
 
         %p
           Thyme is just a basic timer.  But you can add functionality with Ruby.
-          Extend it to handle your Pomodoro related actions, like opening up
-          your todo today sheet.
+          Extend it to handle your Pomodoro related actions, like adding a break
+          timer or opening up your todo today sheet.
 
       .about
         %p
