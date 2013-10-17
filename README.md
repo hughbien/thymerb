@@ -58,6 +58,7 @@ The `set` method sets different configurations.  There are only two:
 * `:timer` is the number of seconds to countdown from
 * `:interval` is the refresh rate of the progress bar and tmux status in seconds
 * `:tmux` is whether or not you want tmux integration on (off by default)
+* `:tmux_theme` optionally lets you format the tmux status
 
 The `option` method adds new options to the `thyme` command.  In the above
 example, we can now execute `thyme -b` or `thyme -t`.  Use `thyme -h` to see
