@@ -1,5 +1,5 @@
 require 'rubygems'
-require "#{File.dirname(__FILE__)}/thyme"
+require File.expand_path("#{File.dirname(__FILE__)}/../lib/thyme")
 require 'minitest'
 
 Minitest.autorun

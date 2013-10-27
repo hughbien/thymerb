@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'ruby-progressbar'
   s.add_development_dependency 'minitest'
  
-  s.files        = Dir.glob('*.{rb,md}') + %w(thyme)
-  s.bindir       = '.'
+  s.files        = Dir.glob('*.md') + Dir.glob('bin/*') + Dir.glob('lib/*')
+  s.bindir       = 'bin'
   s.executables  = ['thyme']
 end
