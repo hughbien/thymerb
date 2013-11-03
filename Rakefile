@@ -1,10 +1,10 @@
 require File.expand_path('thyme', File.join(File.dirname(__FILE__), 'lib'))
 
-task :default => :test
+task :default => :spec
 
-desc 'Run tests'
-task :test do
-  ruby 'test/*_test.rb'
+desc 'Run specs'
+task :spec do
+  ruby 'spec/*_spec.rb'
 end
 
 desc 'Build gem'
