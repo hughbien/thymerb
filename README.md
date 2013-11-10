@@ -34,7 +34,7 @@ Thyme is configurable and extensible.  All configurations live in the
     set :timer, 25*60
     set :interval, 1
     set :tmux, true
-    set :tmux_theme "#[fg=mycolor,bg=mycolor]#[fg=%s]%s#[fg=mycolor,bg=mycolor]"
+    set :tmux_theme, "#[fg=mycolor,bg=mycolor]#[fg=%s]%s#[fg=mycolor,bg=mycolor]"
 
     option :b, :break, 'start a break' do
       set :timer, 5*60
