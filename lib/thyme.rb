@@ -6,7 +6,7 @@ class Thyme
   CONFIG_FILE = "#{ENV['HOME']}/.thymerc"
   PID_FILE = "#{ENV['HOME']}/.thyme-pid"
   TMUX_FILE = "#{ENV['HOME']}/.thyme-tmux"
-  OPTIONS = [:timer, :tmux, :interval]
+  OPTIONS = [:timer, :tmux, :interval, :tmux_theme]
 
   def initialize
     @timer = 25 * 60
