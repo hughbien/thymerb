@@ -32,6 +32,7 @@ Thyme is configurable and extensible.  All configurations live in the
 `~/.thymerc` file:
 
     set :timer, 25*60
+    set :warning, 5*60
     set :interval, 1
     set :tmux, true
     set :tmux_theme, "#[fg=mycolor,bg=mycolor]#[fg=%s]%s#[fg=mycolor,bg=mycolor]"
@@ -55,9 +56,10 @@ Thyme is configurable and extensible.  All configurations live in the
 
 The `set` method sets different configurations.  There are only two:
 
-* `:timer` is the number of seconds to countdown from
-* `:interval` is the refresh rate of the progress bar and tmux status in seconds
-* `:tmux` is whether or not you want tmux integration on (off by default)
+* `:timer` seconds to countdown from
+* `:warning` seconds threshold before tmux timer turns red (use 0 to disable)
+* `:interval` refresh rate of the progress bar and tmux status in seconds
+* `:tmux` whether or not you want tmux integration on (false by default)
 * `:tmux_theme` optionally lets you format the tmux status
 
 The `option` method adds new options to the `thyme` command.  In the above

@@ -12,7 +12,7 @@ describe Thyme do
 
   describe "#format" do
     it "formats minutes" do
-      @thyme.send(:format, 25*60, 2).must_equal('25:10')
+      @thyme.send(:format, 25*60, 2).must_equal('25:00')
       @thyme.send(:format, 25*60-1, 2).must_equal('24:59')
       @thyme.send(:format, 5*60, 2).must_equal(' 5:00')
       @thyme.send(:format, 4*60+5, 2).must_equal(' 4:05')
@@ -26,6 +26,12 @@ describe Thyme do
 
     it "uses bolded red for under 5 minutes" do
       @thyme.send(:color, 5*60-1).must_equal('red,bold')
+    end
+
+    it "uses warning to customize color threshold" do
+      @thyme.set(:warning, 5)
+      @thyme.send(:color, 5*60-1).must_equal('default')
+      @thyme.send(:color, 4).must_equal('red,bold')
     end
   end
 
