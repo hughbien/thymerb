@@ -28,7 +28,6 @@
                   Timer for Pomodoro Technique
                   -d, --daemon       <span class="desktop-only">         </span>run in background
                   -h, --help         <span class="desktop-only">         </span>show this help message
-                  -s, --stop         <span class="desktop-only">         </span>stop timer
 
                   <strong class="prompt">$</strong> thyme
                   [==================<span class="desktop-only">=========</span>=============  ]  4:42
@@ -95,16 +94,13 @@
             = preserve do
               :plain
                 <strong class="prompt">$</strong> thyme -d
-                <strong class="prompt">$</strong> thyme -s
                 <strong class="prompt">$</strong> vim ~/.vimrc
                 nmap &lt;leader&gt;t :!thyme -d&lt;cr&gt;
-                nmap &lt;leader&gt;t :!thyme -s&lt;cr&gt;
 
         %p
-          Let Thyme run as a daemon while you finish
+          Toggle Thyme to run as a daemon while you finish
           your work with <code>-d</code>.
-          Stop a Pomodoro at any time with <code>-s</code>.
-          Both commands integrate nicely into most editors.
+          It integrates nicely into most editors.
 
       .feature
         %h3 Extend It

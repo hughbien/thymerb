@@ -11,7 +11,6 @@ ARGV.options do |o|
   o.define_head "Timer for Pomodoro Technique"
   o.on('-d', '--daemon', 'run in background') { thyme.daemonize! }
   o.on('-h', '--help', 'show this help message') { puts o; exit }
-  o.on('-s', '--stop', 'stops timer') { thyme.stop; exit }
   o.parse!
   thyme.run
 end

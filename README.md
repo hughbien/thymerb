@@ -22,8 +22,8 @@ you of the timer:
 
     $ thyme -d
 
-To interrupt the timer in daemon mode, simply run `thyme --stop`.  Or wait 25
-minutes for it to kill itself.
+To interrupt the timer in daemon mode, run `thyme` again.  Or wait 25 minutes
+for it to kill itself.
 
 Configure
 =========
@@ -85,7 +85,16 @@ For vim integration, I like to execute `thyme -d` to toggle the timer.  This onl
 works if you have tmux integration setup for the countdown:
 
     nmap <leader>t :!thyme -d<cr>
-    nmap <leader>T :!thyme -s<cr>
+
+TODO
+====
+
+* `-p` or space to pause/unpause
+* pause/unpause hooks
+* better tmux formatter (via method? with colors, seconds left etc...)
+* remove bar calculations for daemons, tmux calculations for false tmux setting
+* update README/website docs
+* version bump
 
 License
 =======

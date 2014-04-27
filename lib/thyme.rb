@@ -17,6 +17,50 @@ class Thyme
   end
 
   def run
+    running? ? stop_timer : start_timer
+  end
+
+  def daemonize!
+    Process.daemon
+  end
+
+  def set(opt, val)
+    raise ThymeError.new("Invalid option: #{opt}") if !OPTIONS.include?(opt.to_sym)
+    self.instance_variable_set("@#{opt}", val)
+  end
+
+  def before(&block)
+    @before = block
+  end
+
+  def after(&block)
+    @after = block
+  end
+
+  def option(optparse, short, long, desc, &block)
+    optparse.on("-#{short}", "--#{long}", desc) { self.instance_exec(&block); exit }
+  end
+
+  def load_config(optparse)
+    return if !File.exists?(CONFIG_FILE)
+    app = self
+    Object.class_eval do
+      define_method(:set) { |opt,val| app.set(opt,val) }
+      define_method(:before) { |&block| app.before(&block) }
+      define_method(:after) { |&block| app.after(&block) }
+      define_method(:option) { |sh,lo,desc,&b| app.option(optparse,sh,lo,desc,&b) }
+    end
+    load(CONFIG_FILE, true)
+  end
+
+  def running?
+    File.exists?(PID_FILE)
+  end
+
+  private
+
+  def start_timer
+    File.open(PID_FILE, "w") { |f| f.print(Process.pid) }
     before_hook = @before
     seconds_start = @timer
     seconds_left = seconds_start + 1
@@ -57,48 +101,14 @@ class Thyme
     self.instance_exec(seconds_left, &@after) if @after
   end
 
-  def stop
-    return if !File.exists?(PID_FILE)
+  def stop_timer
     pid = File.read(PID_FILE).to_i
-    File.delete(PID_FILE)
     Process.kill('TERM', pid) if pid > 1
+  rescue Errno::ESRCH # process is already dead, cleanup files and restart
+    File.delete(TMUX_FILE) if File.exists?(TMUX_FILE)
+    File.delete(PID_FILE) if File.exists?(PID_FILE)
   end
 
-  def daemonize!
-    Process.daemon
-    File.open(PID_FILE, "w") { |f| f.print(Process.pid) }
-  end
-
-  def set(opt, val)
-    raise ThymeError.new("Invalid option: #{opt}") if !OPTIONS.include?(opt.to_sym)
-    self.instance_variable_set("@#{opt}", val)
-  end
-
-  def before(&block)
-    @before = block
-  end
-
-  def after(&block)
-    @after = block
-  end
-
-  def option(optparse, short, long, desc, &block)
-    optparse.on("-#{short}", "--#{long}", desc) { self.instance_exec(&block); exit }
-  end
-
-  def load_config(optparse)
-    return if !File.exists?(CONFIG_FILE)
-    app = self
-    Object.class_eval do
-      define_method(:set) { |opt,val| app.set(opt,val) }
-      define_method(:before) { |&block| app.before(&block) }
-      define_method(:after) { |&block| app.after(&block) }
-      define_method(:option) { |sh,lo,desc,&b| app.option(optparse,sh,lo,desc,&b) }
-    end
-    load(CONFIG_FILE, true)
-  end
-
-  private
   def seconds_since(time)
     ((DateTime.now - time) * 24 * 60 * 60).to_i
   end
