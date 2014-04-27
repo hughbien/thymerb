@@ -6,14 +6,16 @@ class Thyme
   CONFIG_FILE = "#{ENV['HOME']}/.thymerc"
   PID_FILE = "#{ENV['HOME']}/.thyme-pid"
   TMUX_FILE = "#{ENV['HOME']}/.thyme-tmux"
-  OPTIONS = [:timer, :warning, :tmux, :interval, :tmux_theme]
+  OPTIONS = [:interval, :timer, :tmux, :tmux_theme, :warning]
+
+  attr_reader :daemon
 
   def initialize
-    @timer = 25 * 60
-    @warning = 5 * 60
-    @tmux = false
     @interval = 1
+    @timer = 25 * 60
+    @tmux = false
     @tmux_theme = "#[default]#[fg=%s]%s#[default]" 
+    @warning = 5 * 60
   end
 
   def run

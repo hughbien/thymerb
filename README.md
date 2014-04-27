@@ -86,15 +86,6 @@ works if you have tmux integration setup for the countdown:
 
     nmap <leader>t :!thyme -d<cr>
 
-TODO
-====
-
-* `-p` or space to pause/unpause
-* pause/unpause hooks
-* better tmux formatter (via method? with colors, seconds left etc...)
-* update README/website docs
-* version bump
-
 License
 =======
 
