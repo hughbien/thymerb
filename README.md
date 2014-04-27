@@ -92,7 +92,6 @@ TODO
 * `-p` or space to pause/unpause
 * pause/unpause hooks
 * better tmux formatter (via method? with colors, seconds left etc...)
-* remove bar calculations for daemons, tmux calculations for false tmux setting
 * update README/website docs
 * version bump
 

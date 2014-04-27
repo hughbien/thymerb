@@ -21,6 +21,7 @@ class Thyme
   end
 
   def daemonize!
+    @daemon = true
     Process.daemon
   end
 
@@ -66,19 +67,21 @@ class Thyme
     seconds_left = seconds_start + 1
     start_time = DateTime.now
     min_length = (seconds_left / 60).floor.to_s.length
-    tmux_file = File.open(TMUX_FILE, "w")
+    tmux_file = File.open(TMUX_FILE, "w") if @tmux
     bar = ProgressBar.create(
       title: format(seconds_left-1, min_length),
       total: seconds_start,
       length: 50,
-      format: '[%B] %t')
+      format: '[%B] %t') if !@daemon
     while seconds_left > 0
       seconds_passed = seconds_since(start_time)
       seconds_left = [seconds_start - seconds_passed, 0].max
       title = format(seconds_left, min_length)
       fg = color(seconds_left)
-      bar.title = title
-      bar.progress = seconds_passed
+      if !@daemon
+        bar.title = title
+        bar.progress = seconds_passed
+      end
       if @tmux
         tmux_file.truncate(0)
         tmux_file.rewind
@@ -94,7 +97,7 @@ class Thyme
   rescue SignalException => e
     puts ""
   ensure
-    tmux_file.close
+    tmux_file.close if tmux_file
     File.delete(TMUX_FILE) if File.exists?(TMUX_FILE)
     File.delete(PID_FILE) if File.exists?(PID_FILE)
     seconds_left = [seconds_start - seconds_since(start_time), 0].max
