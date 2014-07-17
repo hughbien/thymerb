@@ -6,7 +6,7 @@ class Thyme
   CONFIG_FILE = "#{ENV['HOME']}/.thymerc"
   PID_FILE = "#{ENV['HOME']}/.thyme-pid"
   TMUX_FILE = "#{ENV['HOME']}/.thyme-tmux"
-  OPTIONS = [:interval, :timer, :tmux, :tmux_theme, :warning]
+  OPTIONS = [:interval, :timer, :tmux, :tmux_theme, :warning, :warning_color]
 
   attr_reader :daemon
 
@@ -16,6 +16,7 @@ class Thyme
     @tmux = false
     @tmux_theme = "#[default]#[fg=%s]%s#[default]" 
     @warning = 5 * 60
+    @warning_color = "red,bold"
   end
 
   def run
@@ -129,7 +130,7 @@ class Thyme
   end
 
   def color(seconds)
-    seconds < @warning ? 'red,bold' : 'default'
+    seconds < @warning ? @warning_color : 'default'
   end
 end
 
