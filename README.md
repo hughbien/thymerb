@@ -33,6 +33,7 @@ Thyme is configurable and extensible.  All configurations live in the
 
     set :timer, 25*60
     set :warning, 5*60
+    set :warning_color, "red,bold"
     set :interval, 1
     set :tmux, true
     set :tmux_theme, "#[fg=mycolor,bg=mycolor]#[fg=%s]%s#[fg=mycolor,bg=mycolor]"
@@ -54,10 +55,11 @@ Thyme is configurable and extensible.  All configurations live in the
       `notify-send -u critical "Thymes Up!"` if seconds_left == 0
     end
 
-The `set` method sets different configurations.  There are only two:
+The `set` method sets different configurations.
 
 * `:timer` seconds to countdown from
 * `:warning` seconds threshold before tmux timer turns red (use 0 to disable)
+* `:warning_color` color of the tmux timer during the warning period
 * `:interval` refresh rate of the progress bar and tmux status in seconds
 * `:tmux` whether or not you want tmux integration on (false by default)
 * `:tmux_theme` optionally lets you format the tmux status

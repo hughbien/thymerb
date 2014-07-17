@@ -33,6 +33,11 @@ describe Thyme do
       @thyme.send(:color, 5*60-1).must_equal('default')
       @thyme.send(:color, 4).must_equal('red,bold')
     end
+
+    it "allows warning color to be customized" do
+      @thyme.set(:warning_color, 'yellow,bold')
+      @thyme.send(:color, 4).must_equal('yellow,bold')
+    end
   end
 
   describe "#set" do
