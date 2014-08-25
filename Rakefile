@@ -1,10 +1,10 @@
 require File.expand_path('thyme', File.join(File.dirname(__FILE__), 'lib'))
 
-task :default => :spec
+task :default => :test
 
-desc 'Run specs'
-task :spec do
-  ruby 'spec/*_spec.rb'
+desc 'Run tests'
+task :test do
+  ruby 'test/*_test.rb'
 end
 
 desc 'Build gem'
@@ -37,6 +37,6 @@ namespace :site do
 
   desc 'Remove built site artifacts'
   task :clean do
-    rm_r 'site/public'
+    rm_rf 'site/public'
   end
 end

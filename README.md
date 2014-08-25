@@ -88,6 +88,17 @@ works if you have tmux integration setup for the countdown:
 
     nmap <leader>t :!thyme -d<cr>
 
+TODO
+====
+
+* fix unit test output to hide progress bar
+* add break timer
+* add pause/unpause
+* add repeat
+* add key/value theme config
+* pass args to option blocks in thymerc file
+* have run method set flag in option blocks, so breaks can be `-db` or `-bd`
+
 License
 =======
 
