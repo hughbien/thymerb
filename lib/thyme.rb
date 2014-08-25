@@ -19,8 +19,12 @@ class Thyme
     @warning_color = "red,bold"
   end
 
-  def run
-    running? ? stop_timer : start_timer
+  def run(force=false)
+    if force
+      running? ? stop_timer : start_timer
+    else
+      @run = true
+    end
   end
 
   def break!
@@ -46,7 +50,10 @@ class Thyme
   end
 
   def option(optparse, short, long, desc, &block)
-    optparse.on("-#{short}", "--#{long}", desc) { |*args| self.instance_exec(*args, &block); exit }
+    optparse.on("-#{short}", "--#{long}", desc) do |*args|
+      self.instance_exec(*args, &block)
+      exit if !@run
+    end
   end
 
   def load_config(optparse)

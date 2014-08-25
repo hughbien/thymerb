@@ -90,12 +90,6 @@ works if you have tmux integration setup for the countdown:
 
     nmap <leader>t :!thyme -d<cr>
 
-TODO
-====
-
-* add key/value theme config
-* have run method set flag in option blocks, so breaks can be `-db` or `-bd`
-
 License
 =======
 

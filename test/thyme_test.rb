@@ -40,32 +40,35 @@ class ThymeTest < Minitest::Test
     assert_equal(0, @thyme.instance_variable_get('@timer'))
     @thyme.set(:timer, 20*60)
     assert_equal(20*60, @thyme.instance_variable_get('@timer'))
-
-    # set break mode
-    refute(@thyme.instance_variable_get('@break'))
-    @thyme.break!
-    assert(@thyme.instance_variable_get('@break'))
   end
 
   def test_set_unknown_key
     assert_raises(ThymeError) { @thyme.set(:invalid, nil) }
   end
 
+  def test_break
+    refute(@thyme.instance_variable_get('@break'))
+    @thyme.break!
+    assert(@thyme.instance_variable_get('@break'))
+  end
+
   def test_run
+    refute(@thyme.instance_variable_get('@run'))
     @thyme.run
+    assert(@thyme.instance_variable_get('@run'))
   end
 
   def test_before_hook
     @thyme.before { @before_flag = true }
     assert_nil(@thyme.instance_variable_get('@before_flag'))
-    @thyme.run
+    @thyme.run(true)
     assert(@thyme.instance_variable_get('@before_flag'))
   end
 
   def test_after_hook
     @thyme.after { @after_flag = true }
     assert_nil(@thyme.instance_variable_get('@after_flag'))
-    @thyme.run
+    @thyme.run(true)
     assert(@thyme.instance_variable_get('@after_flag'))
   end
 end

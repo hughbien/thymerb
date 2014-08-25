@@ -5,13 +5,13 @@ require File.expand_path('thyme', File.join(File.dirname(__FILE__), '..', 'lib')
 $0 = 'thyme'
 ARGV.options do |o|
   thyme = Thyme.new
-  thyme.load_config(o)
   o.set_summary_indent('  ')
   o.banner =    "Usage: #{File.basename($0)} [OPTION]"
   o.define_head "Timer for Pomodoro Technique"
   o.on('-b', '--break', 'run break timer') { thyme.break! }
   o.on('-d', '--daemon', 'run in background') { thyme.daemonize! }
   o.on('-h', '--help', 'show this help message') { puts o; exit }
+  thyme.load_config(o)
   o.parse!
-  thyme.run
+  thyme.run(true)
 end
