@@ -31,17 +31,13 @@ Configure
 Thyme is configurable and extensible.  All configurations live in the
 `~/.thymerc` file:
 
+    set :break, 5*60
     set :timer, 25*60
     set :warning, 5*60
     set :warning_color, "red,bold"
     set :interval, 1
     set :tmux, true
     set :tmux_theme, "#[fg=mycolor,bg=mycolor]#[fg=%s]%s#[fg=mycolor,bg=mycolor]"
-
-    option :b, :break, 'start a break' do
-      set :timer, 5*60
-      run
-    end
 
     option :t, :today, 'open today sheet' do
       `vim -O ~/.thyme-today.md ~/.thyme-records.md < \`tty\` > \`tty\``
@@ -92,7 +88,6 @@ TODO
 ====
 
 * fix unit test output to hide progress bar
-* add break timer
 * add pause/unpause
 * add repeat
 * add key/value theme config

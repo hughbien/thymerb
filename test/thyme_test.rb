@@ -5,6 +5,7 @@ class ThymeTest < Minitest::Test
   def setup
     @thyme = Thyme.new
     @thyme.set(:interval, 0)
+    @thyme.set(:break, 0)
     @thyme.set(:timer, 0)
   end
 
@@ -18,6 +19,9 @@ class ThymeTest < Minitest::Test
   def test_color
     assert_equal('default', @thyme.send(:color, 5*60))    # default for 5 minutes or over
     assert_equal('red,bold', @thyme.send(:color, 5*60-1)) # for under 5 minutes
+
+    @thyme.break!
+    assert_equal('default', @thyme.send(:color, 5*60-1))  # breaks always use default color
   end
 
   def test_color_custom_warning
@@ -30,9 +34,20 @@ class ThymeTest < Minitest::Test
   end
 
   def test_set
-    assert_equal(0, @thyme.instance_variable_get('@timer')) # default timer is zero
+    assert_equal(0, @thyme.instance_variable_get('@break'))
+    assert_equal(0, @thyme.instance_variable_get('@timer'))
     @thyme.set(:timer, 20*60)
     assert_equal(20*60, @thyme.instance_variable_get('@timer'))
+
+    # set break mode
+    assert_equal(:main, @thyme.instance_variable_get('@mode'))
+    @thyme.break!
+    assert_equal(:break, @thyme.instance_variable_get('@mode'))
+
+    # set daemon mode
+    refute(@thyme.instance_variable_get('@daemon'))
+    @thyme.daemonize!
+    assert(@thyme.instance_variable_get('@daemon'))
   end
 
   def test_set_unknown_key
