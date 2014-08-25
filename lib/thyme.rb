@@ -6,15 +6,13 @@ class Thyme
   CONFIG_FILE = "#{ENV['HOME']}/.thymerc"
   PID_FILE = "#{ENV['HOME']}/.thyme-pid"
   TMUX_FILE = "#{ENV['HOME']}/.thyme-tmux"
-  OPTIONS = [:break, :interval, :timer, :tmux, :tmux_theme, :warning, :warning_color]
-
-  attr_reader :daemon
+  OPTIONS = [:interval, :timer, :timer_break, :tmux, :tmux_theme, :warning, :warning_color]
 
   def initialize
-    @break = 5 * 60
+    @break = false
     @interval = 1
-    @mode = :main
     @timer = 25 * 60
+    @timer_break = 5 * 60
     @tmux = false
     @tmux_theme = "#[default]#[fg=%s]%s#[default]" 
     @warning = 5 * 60
@@ -26,7 +24,7 @@ class Thyme
   end
 
   def break!
-    @mode = :break
+    @break = true
   end
 
   def daemonize!
@@ -72,7 +70,7 @@ class Thyme
   def start_timer
     File.open(PID_FILE, "w") { |f| f.print(Process.pid) }
     before_hook = @before
-    seconds_start = @mode == :main ? @timer : @break
+    seconds_start = @break ? @timer_break : @timer
     seconds_left = seconds_start + 1
     start_time = DateTime.now
     min_length = (seconds_left / 60).floor.to_s.length
@@ -137,7 +135,7 @@ class Thyme
   end
 
   def color(seconds)
-    @mode == :main && seconds < @warning ? @warning_color : 'default'
+    !@break && seconds < @warning ? @warning_color : 'default'
   end
 end
 

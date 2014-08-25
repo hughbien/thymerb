@@ -31,8 +31,8 @@ Configure
 Thyme is configurable and extensible.  All configurations live in the
 `~/.thymerc` file:
 
-    set :break, 5*60
     set :timer, 25*60
+    set :timer_break, 5*60
     set :warning, 5*60
     set :warning_color, "red,bold"
     set :interval, 1
@@ -48,12 +48,13 @@ Thyme is configurable and extensible.  All configurations live in the
     end
 
     after do |seconds_left|
-      `notify-send -u critical "Thymes Up!"` if seconds_left == 0
+      `notify-send -u critical "Thyme's Up!"` if seconds_left == 0
     end
 
 The `set` method sets different configurations.
 
 * `:timer` seconds to countdown from
+* `:timer_break` seconds to countdown from in break mode
 * `:warning` seconds threshold before tmux timer turns red (use 0 to disable)
 * `:warning_color` color of the tmux timer during the warning period
 * `:interval` refresh rate of the progress bar and tmux status in seconds

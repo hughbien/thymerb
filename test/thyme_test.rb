@@ -7,8 +7,8 @@ class ThymeTest < Minitest::Test
   def setup
     @thyme = Thyme.new
     @thyme.set(:interval, 0)
-    @thyme.set(:break, 0)
     @thyme.set(:timer, 0)
+    @thyme.set(:timer_break, 0)
   end
 
   def test_format
@@ -36,15 +36,15 @@ class ThymeTest < Minitest::Test
   end
 
   def test_set
-    assert_equal(0, @thyme.instance_variable_get('@break'))
+    assert_equal(0, @thyme.instance_variable_get('@timer_break'))
     assert_equal(0, @thyme.instance_variable_get('@timer'))
     @thyme.set(:timer, 20*60)
     assert_equal(20*60, @thyme.instance_variable_get('@timer'))
 
     # set break mode
-    assert_equal(:main, @thyme.instance_variable_get('@mode'))
+    refute(@thyme.instance_variable_get('@break'))
     @thyme.break!
-    assert_equal(:break, @thyme.instance_variable_get('@mode'))
+    assert(@thyme.instance_variable_get('@break'))
   end
 
   def test_set_unknown_key
