@@ -43,6 +43,11 @@ Thyme is configurable and extensible.  All configurations live in the
       `vim -O ~/.thyme-today.md ~/.thyme-records.md < \`tty\` > \`tty\``
     end
 
+    option :s, 'seconds num', 'run with custom seconds' do |num|
+      @timer = num.to_i
+      run
+    end
+
     before do
       `mplayer ~/music/flight-of-the-bumble-bee.mp3 &`
     end
@@ -89,7 +94,6 @@ TODO
 ====
 
 * add key/value theme config
-* pass args to option blocks in thymerc file
 * have run method set flag in option blocks, so breaks can be `-db` or `-bd`
 
 License

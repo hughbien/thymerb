@@ -46,7 +46,7 @@ class Thyme
   end
 
   def option(optparse, short, long, desc, &block)
-    optparse.on("-#{short}", "--#{long}", desc) { self.instance_exec(&block); exit }
+    optparse.on("-#{short}", "--#{long}", desc) { |*args| self.instance_exec(*args, &block); exit }
   end
 
   def load_config(optparse)
