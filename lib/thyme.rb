@@ -77,17 +77,18 @@ class Thyme
     start_time = DateTime.now
     min_length = (seconds_left / 60).floor.to_s.length
     tmux_file = File.open(TMUX_FILE, "w") if @tmux
-    bar = ProgressBar.create(
-      title: format(seconds_left-1, min_length),
-      total: seconds_start,
-      length: 50,
-      format: '[%B] %t') if !@daemon
+    bar = ENV['THYME_TEST'].nil? && !@daemon ?
+      ProgressBar.create(
+        title: format(seconds_left-1, min_length),
+        total: seconds_start,
+        length: 50,
+        format: '[%B] %t') : nil
     while seconds_left > 0
       seconds_passed = seconds_since(start_time)
       seconds_left = [seconds_start - seconds_passed, 0].max
       title = format(seconds_left, min_length)
       fg = color(seconds_left)
-      if !@daemon
+      if bar
         bar.title = title
         bar.progress = seconds_passed
       end

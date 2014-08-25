@@ -1,6 +1,8 @@
 require_relative '../lib/thyme'
 require 'minitest/autorun'
 
+ENV['THYME_TEST'] = 'true'
+
 class ThymeTest < Minitest::Test
   def setup
     @thyme = Thyme.new
@@ -43,11 +45,6 @@ class ThymeTest < Minitest::Test
     assert_equal(:main, @thyme.instance_variable_get('@mode'))
     @thyme.break!
     assert_equal(:break, @thyme.instance_variable_get('@mode'))
-
-    # set daemon mode
-    refute(@thyme.instance_variable_get('@daemon'))
-    @thyme.daemonize!
-    assert(@thyme.instance_variable_get('@daemon'))
   end
 
   def test_set_unknown_key

@@ -87,9 +87,6 @@ works if you have tmux integration setup for the countdown:
 TODO
 ====
 
-* fix unit test output to hide progress bar
-* add pause/unpause
-* add repeat
 * add key/value theme config
 * pass args to option blocks in thymerc file
 * have run method set flag in option blocks, so breaks can be `-db` or `-bd`
