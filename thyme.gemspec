@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'thyme'
-  s.version     = '0.0.11'
+  s.version     = '0.0.12'
   s.platform    = Gem::Platform::RUBY
   s.authors     = ['Hugh Bien']
   s.email       = ['hugh@hughbien.com']
