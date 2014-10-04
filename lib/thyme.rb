@@ -37,7 +37,7 @@ class Thyme
   end
 
   def daemon?
-    @daemon || false
+    !!@daemon
   end
 
   def set(opt, val)
@@ -53,8 +53,8 @@ class Thyme
     @after = block
   end
 
-  def on_tick(&block)
-    @on_tick = block
+  def tick(&block)
+    @tick = block
   end
 
   def option(optparse, short, long, desc, &block)
@@ -71,9 +71,8 @@ class Thyme
       define_method(:set) { |opt,val| app.set(opt,val) }
       define_method(:before) { |&block| app.before(&block) }
       define_method(:after) { |&block| app.after(&block) }
-      define_method(:tick) { |&block| app.on_tick(&block) }
+      define_method(:tick) { |&block| app.tick(&block) }
       define_method(:option) { |sh,lo,desc,&b| app.option(optparse,sh,lo,desc,&b) }
-      define_method(:daemon?) { app.daemon? }
     end
     load(CONFIG_FILE, true)
   end
@@ -87,21 +86,17 @@ class Thyme
   def start_timer
     File.open(PID_FILE, "w") { |f| f.print(Process.pid) }
     before_hook = @before
-    on_tick = @on_tick
     seconds_start = @break ? @timer_break : @timer
     seconds_left = seconds_start + 1
     start_time = DateTime.now
     min_length = (seconds_left / 60).floor.to_s.length
     tmux_file = File.open(TMUX_FILE, "w") if @tmux
-    bar = if ENV['THYME_TEST'].nil? && !daemon?
-            ProgressBar.create(
-              title: format(seconds_left-1, min_length),
-              total: seconds_start,
-              length: 50,
-              format: '[%B] %t')
-          else
-            nil
-          end
+    bar = ENV['THYME_TEST'].nil? && !daemon? ?
+      ProgressBar.create(
+        title: format(seconds_left-1, min_length),
+        total: seconds_start,
+        length: 50,
+        format: '[%B] %t') : nil
     while seconds_left > 0
       seconds_passed = seconds_since(start_time)
       seconds_left = [seconds_start - seconds_passed, 0].max
@@ -121,8 +116,8 @@ class Thyme
         self.instance_exec(&before_hook)
         before_hook = nil
       end
-      if on_tick
-        self.instance_exec(seconds_left, &on_tick)
+      if @tick
+        self.instance_exec(seconds_left, &@tick)
       end
       sleep(@interval)
     end

@@ -65,6 +65,13 @@ class ThymeTest < Minitest::Test
     assert(@thyme.instance_variable_get('@before_flag'))
   end
 
+  def test_tick_hook
+    count = 0
+    @thyme.tick { count += 1 }
+    @thyme.run(true)
+    assert_equal(1, count) # tests only run one interval
+  end
+
   def test_after_hook
     @thyme.after { @after_flag = true }
     assert_nil(@thyme.instance_variable_get('@after_flag'))
