@@ -49,6 +49,10 @@ class Thyme
     @after = block
   end
 
+  def on_tick(&block)
+    @on_tick = block
+  end
+
   def option(optparse, short, long, desc, &block)
     optparse.on("-#{short}", "--#{long}", desc) do |*args|
       self.instance_exec(*args, &block)
@@ -63,6 +67,7 @@ class Thyme
       define_method(:set) { |opt,val| app.set(opt,val) }
       define_method(:before) { |&block| app.before(&block) }
       define_method(:after) { |&block| app.after(&block) }
+      define_method(:tick) { |&block| app.on_tick(&block) }
       define_method(:option) { |sh,lo,desc,&b| app.option(optparse,sh,lo,desc,&b) }
     end
     load(CONFIG_FILE, true)
@@ -77,6 +82,7 @@ class Thyme
   def start_timer
     File.open(PID_FILE, "w") { |f| f.print(Process.pid) }
     before_hook = @before
+    on_tick = @on_tick
     seconds_start = @break ? @timer_break : @timer
     seconds_left = seconds_start + 1
     start_time = DateTime.now
@@ -106,6 +112,9 @@ class Thyme
       if before_hook
         self.instance_exec(&before_hook)
         before_hook = nil
+      end
+      if on_tick
+        self.instance_exec(seconds_left, &on_tick)
       end
       sleep(@interval)
     end
