@@ -36,6 +36,10 @@ class Thyme
     Process.daemon
   end
 
+  def daemon?
+    @daemon || false
+  end
+
   def set(opt, val)
     raise ThymeError.new("Invalid option: #{opt}") if !OPTIONS.include?(opt.to_sym)
     self.instance_variable_set("@#{opt}", val)
@@ -69,6 +73,7 @@ class Thyme
       define_method(:after) { |&block| app.after(&block) }
       define_method(:tick) { |&block| app.on_tick(&block) }
       define_method(:option) { |sh,lo,desc,&b| app.option(optparse,sh,lo,desc,&b) }
+      define_method(:daemon?) { app.daemon? }
     end
     load(CONFIG_FILE, true)
   end
@@ -88,12 +93,15 @@ class Thyme
     start_time = DateTime.now
     min_length = (seconds_left / 60).floor.to_s.length
     tmux_file = File.open(TMUX_FILE, "w") if @tmux
-    bar = ENV['THYME_TEST'].nil? && !@daemon ?
-      ProgressBar.create(
-        title: format(seconds_left-1, min_length),
-        total: seconds_start,
-        length: 50,
-        format: '[%B] %t') : nil
+    bar = if ENV['THYME_TEST'].nil? && !daemon?
+            ProgressBar.create(
+              title: format(seconds_left-1, min_length),
+              total: seconds_start,
+              length: 50,
+              format: '[%B] %t')
+          else
+            nil
+          end
     while seconds_left > 0
       seconds_passed = seconds_since(start_time)
       seconds_left = [seconds_start - seconds_passed, 0].max
