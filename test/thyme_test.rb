@@ -78,4 +78,37 @@ class ThymeTest < Minitest::Test
     @thyme.run(true)
     assert(@thyme.instance_variable_get('@after_flag'))
   end
+
+  def test_plugin_should_initialize_passing_arguments
+    block = proc { }
+    mock_plugin = MiniTest::Mock.new
+    mock_plugin.expect :new, nil do |*args, &blk|
+      args == [@thyme, { a: 1, b: 2 }] && blk == block
+    end
+    @thyme.use mock_plugin, a: 1, b: 2, &block
+    mock_plugin.verify
+  end
+
+  def test_plugin_should_call_methods
+    mock_plugin   = MiniTest::Mock.new
+    mock_instance = MiniTest::Mock.new
+    mock_plugin.expect :new, mock_instance, [@thyme]
+    mock_instance.expect :before, nil, []
+    mock_instance.expect :tick,   nil, [0]
+    mock_instance.expect :after,  nil, [0]
+    @thyme.use mock_plugin
+    @thyme.run(true)
+    mock_plugin.verify
+    mock_instance.verify
+  end
+
+  def test_plugin_should_call_methods_when_available
+    mock_plugin   = MiniTest::Mock.new
+    mock_instance = Object.new
+    mock_plugin.expect :new, mock_instance, [@thyme]
+    @thyme.use mock_plugin
+    @thyme.run(true)
+    mock_plugin.verify
+  end
 end
+

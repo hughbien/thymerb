@@ -9,6 +9,7 @@ class Thyme
   OPTIONS = [:interval, :timer, :timer_break, :tmux, :tmux_theme, :warning, :warning_color]
 
   def initialize
+    @plugins = []
     @break = false
     @interval = 1
     @timer = 25 * 60
@@ -17,6 +18,10 @@ class Thyme
     @tmux_theme = "#[default]#[fg=%s]%s#[default]" 
     @warning = 5 * 60
     @warning_color = "red,bold"
+  end
+
+  def use(plugin_class, *args, &block)
+    @plugins << plugin_class.new(self, *args, &block)
   end
 
   def run(force=false)
@@ -46,15 +51,15 @@ class Thyme
   end
 
   def before(&block)
-    @before = block
+    use Plugins::BeforeHook, &block
   end
 
   def after(&block)
-    @after = block
+    use Plugins::AfterHook, &block
   end
 
   def tick(&block)
-    @tick = block
+    use Plugins::TickHook, &block
   end
 
   def option(optparse, short, long, desc, &block)
@@ -67,14 +72,15 @@ class Thyme
   def load_config(optparse)
     return if !File.exists?(CONFIG_FILE)
     app = self
-    Object.class_eval do
+    environment = Class.new do
       define_method(:set) { |opt,val| app.set(opt,val) }
+      define_method(:use) { |plugin,*args,&b| app.use(plugin,*args,&b) }
       define_method(:before) { |&block| app.before(&block) }
       define_method(:after) { |&block| app.after(&block) }
       define_method(:tick) { |&block| app.tick(&block) }
       define_method(:option) { |sh,lo,desc,&b| app.option(optparse,sh,lo,desc,&b) }
-    end
-    load(CONFIG_FILE, true)
+    end.new
+    environment.instance_eval(File.read(CONFIG_FILE), CONFIG_FILE)
   end
 
   def running?
@@ -85,12 +91,12 @@ class Thyme
 
   def start_timer
     File.open(PID_FILE, "w") { |f| f.print(Process.pid) }
-    before_hook = @before
     seconds_start = @break ? @timer_break : @timer
     seconds_left = seconds_start + 1
     start_time = DateTime.now
     min_length = (seconds_left / 60).floor.to_s.length
     tmux_file = File.open(TMUX_FILE, "w") if @tmux
+    started = false
     bar = ENV['THYME_TEST'].nil? && !daemon? ?
       ProgressBar.create(
         title: format(seconds_left-1, min_length),
@@ -112,13 +118,11 @@ class Thyme
         tmux_file.write(@tmux_theme % [fg, title])
         tmux_file.flush
       end
-      if before_hook
-        self.instance_exec(&before_hook)
-        before_hook = nil
+      unless started
+        started = true
+        send_to_plugin :before
       end
-      if @tick
-        self.instance_exec(seconds_left, &@tick)
-      end
+      send_to_plugin :tick, seconds_left
       sleep(@interval)
     end
   rescue SignalException => e
@@ -128,7 +132,7 @@ class Thyme
     File.delete(TMUX_FILE) if File.exists?(TMUX_FILE)
     File.delete(PID_FILE) if File.exists?(PID_FILE)
     seconds_left = [seconds_start - seconds_since(start_time), 0].max
-    self.instance_exec(seconds_left, &@after) if @after
+    send_to_plugin :after, seconds_left
   end
 
   def stop_timer
@@ -137,6 +141,18 @@ class Thyme
   rescue Errno::ESRCH # process is already dead, cleanup files and restart
     File.delete(TMUX_FILE) if File.exists?(TMUX_FILE)
     File.delete(PID_FILE) if File.exists?(PID_FILE)
+  end
+
+  def send_to_plugin(message, *args)
+    @plugins.each do |plugin|
+      begin
+        if plugin.respond_to?(message)
+          plugin.public_send(message, *args)
+        end
+      rescue Exception
+        $stderr.puts "Exception raised from #{plugin.class}:", $!, $@
+      end
+    end
   end
 
   def seconds_since(time)
@@ -159,3 +175,5 @@ class Thyme
 end
 
 class ThymeError < StandardError; end;
+
+require_relative 'thyme/plugins'

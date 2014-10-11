@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = '>= 1.3.6'
   s.add_dependency 'ruby-progressbar'
  
-  s.files        = Dir.glob('*.md') + Dir.glob('bin/*') + Dir.glob('lib/*')
+  s.files        = Dir.glob('*.md') + Dir.glob('bin/*') + Dir.glob('lib/**/*.rb')
   s.bindir       = 'bin'
   s.executables  = ['thyme']
 end
