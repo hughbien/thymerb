@@ -73,6 +73,9 @@ available options.
 The `before` and `after` adds hooks to our timer.  Now before the timer starts,
 an mp3 will play.  After the timer ends, a notification will be sent.
 
+
+
+
 Integration
 ===========
 
@@ -89,6 +92,67 @@ For vim integration, I like to execute `thyme -d` to toggle the timer.  This onl
 works if you have tmux integration setup for the countdown:
 
     nmap <leader>t :!thyme -d<cr>
+
+
+
+Plugins
+=======
+
+
+Using Plugins
+-------------
+
+Thyme's functionality can also be extended with plugins.
+To use a plugin, first require it, and then use it:
+
+    require "thyme_growl"
+    use ThymeGrowl, text: "Go take a break NOW !!"
+
+
+Creating Plugins
+----------------
+
+A Thyme plugin is a class that implements these methods:
+
+    class MyThymePlugin
+      def initialize(thyme)
+        # `thyme` is an instance of Thyme (see lib/thyme.rb)
+        # also, any extra arguments passed to `use` will be passed here
+      end
+      def before
+        # code to run when timer start
+      end
+      def tick(seconds_left)
+        # code to run each tick
+      end
+      def after(seconds_left)
+        # code to run after the timer stopped
+      end
+    end
+
+The `before`, `tick`, and `after` methods are optional,
+so you can only implement the methods you want.
+
+For example, a Growl plugin that displays a Growl notification
+can be implemented like this:
+
+    require 'growl'
+
+    class ThymeGrowl
+      DEFAULTS = { title: "Thyme's Up!", text: "The Pomodoro rings!", name: 'thyme' }
+      def initialize(thyme, options={})
+        @options = DEFAULTS.merge(options)
+        @text = @options.delete :text
+      end
+      def after(seconds_left)
+        growl if seconds_left == 0
+      end
+      def growl
+        Growl.notify(@text, @options)
+      end
+    end
+
+
 
 License
 =======
