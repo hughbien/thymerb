@@ -9,7 +9,6 @@ class Thyme
   OPTIONS = [:interval, :timer, :timer_break, :tmux, :tmux_theme, :warning, :warning_color]
 
   def initialize
-    @plugins = []
     @break = false
     @interval = 1
     @timer = 25 * 60
@@ -18,6 +17,7 @@ class Thyme
     @tmux_theme = "#[default]#[fg=%s]%s#[default]" 
     @warning = 5 * 60
     @warning_color = "red,bold"
+    @plugins = []
   end
 
   def use(plugin_class, *args, &block)
@@ -51,15 +51,15 @@ class Thyme
   end
 
   def before(&block)
-    use Plugins::BeforeHook, &block
+    hooks_plugin.add(:before, &block)
   end
 
   def after(&block)
-    use Plugins::AfterHook, &block
+    hooks_plugin.add(:after, &block)
   end
 
   def tick(&block)
-    use Plugins::TickHook, &block
+    hooks_plugin.add(:tick, &block)
   end
 
   def option(optparse, short, long, desc, &block)
@@ -146,12 +146,17 @@ class Thyme
   def send_to_plugin(message, *args)
     @plugins.each do |plugin|
       begin
-        if plugin.respond_to?(message)
-          plugin.public_send(message, *args)
-        end
-      rescue Exception
+        plugin.public_send(message, *args) if plugin.respond_to?(message)
+      rescue
         $stderr.puts "Exception raised from #{plugin.class}:", $!, $@
       end
+    end
+  end
+
+  def hooks_plugin
+    @hooks_plugin ||= begin
+      use ThymeHooksPlugin
+      @plugins.last
     end
   end
 
@@ -176,4 +181,25 @@ end
 
 class ThymeError < StandardError; end;
 
-require_relative 'thyme/plugins'
+class ThymeHooksPlugin
+  def initialize(app)
+    @app = app
+    @hooks = {before: [], tick: [], after: []}
+  end
+
+  def add(type, &block)
+    @hooks[type] << block
+  end
+
+  def before
+    @hooks[:before].each { |b| @app.instance_exec(&b) }
+  end
+
+  def tick(seconds_left)
+    @hooks[:tick].each { |t| @app.instance_exec(seconds_left, &t) }
+  end
+
+  def after(seconds_left)
+    @hooks[:after].each { |a| @app.instance_exec(seconds_left, &a) }
+  end
+end

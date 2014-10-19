@@ -79,7 +79,7 @@ class ThymeTest < Minitest::Test
     assert(@thyme.instance_variable_get('@after_flag'))
   end
 
-  def test_plugin_should_initialize_passing_arguments
+  def test_plugin_init
     block = proc { }
     mock_plugin = MiniTest::Mock.new
     mock_plugin.expect :new, nil do |*args, &blk|
@@ -89,26 +89,25 @@ class ThymeTest < Minitest::Test
     mock_plugin.verify
   end
 
-  def test_plugin_should_call_methods
-    mock_plugin   = MiniTest::Mock.new
-    mock_instance = MiniTest::Mock.new
-    mock_plugin.expect :new, mock_instance, [@thyme]
-    mock_instance.expect :before, nil, []
-    mock_instance.expect :tick,   nil, [0]
-    mock_instance.expect :after,  nil, [0]
-    @thyme.use mock_plugin
+  def test_plugin_hooks
+    plugin_class = MiniTest::Mock.new
+    plugin_obj = MiniTest::Mock.new
+    plugin_class.expect :new, plugin_obj, [@thyme]
+    plugin_obj.expect :before, nil, []
+    plugin_obj.expect :tick, nil, [0]
+    plugin_obj.expect :after, nil, [0]
+    @thyme.use plugin_class
     @thyme.run(true)
-    mock_plugin.verify
-    mock_instance.verify
+    plugin_class.verify
+    plugin_obj.verify
   end
 
-  def test_plugin_should_call_methods_when_available
-    mock_plugin   = MiniTest::Mock.new
-    mock_instance = Object.new
-    mock_plugin.expect :new, mock_instance, [@thyme]
-    @thyme.use mock_plugin
+  def test_plugin_hooks_optional
+    plugin_class = MiniTest::Mock.new
+    plugin_obj = Object.new
+    plugin_class.expect :new, plugin_obj, [@thyme]
+    @thyme.use plugin_class
     @thyme.run(true)
-    mock_plugin.verify
+    plugin_class.verify
   end
 end
-
