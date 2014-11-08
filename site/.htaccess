@@ -6,12 +6,12 @@ RewriteCond %{REQUEST_URI} ^/favicon\.ico|/.*\.png|/.*\.jpg|/.*\.css|.*\.js$
 RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule (.*) $1 [L]
 
-RewriteCond %{HTTP_HOST} ^.*\.thymerb.com$
-RewriteRule (.*) http://thymerb.com/$1 [R=permanent,L]
+RewriteCond %{HTTP_HOST} !^hughbien\.com$
+RewriteRule (.*) http://hughbien.com/thyme/ [R=permanent,L]
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_URI} !(.*)/$
-RewriteRule ^(.*)$ http://thymerb.com/$1/ [R=permanent,L] 
+RewriteRule ^(.*)$ http://hughbien.com/thyme/ [R=permanent,L] 
 
 AddType application/vnd.ms-fontobject .eot
 AddType application/font-woff .woff

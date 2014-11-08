@@ -4,7 +4,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.authors     = ['Hugh Bien']
   s.email       = ['hugh@hughbien.com']
-  s.homepage    = 'http://thymerb.com'
+  s.homepage    = 'http://hughbien.com/thyme/'
   s.summary     = "Timer for Pomodoro Technique"
   s.description = 'Extensible and configurable timer for Pomodoro Technique.'
  
