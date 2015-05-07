@@ -121,6 +121,11 @@ You can create your own plugins.  They implement these methods:
 
 The `before`, `tick`, and `after` methods are all optional.
 
+Some Existing Plugins
+=====================
+
+* [Thyme Ubuntu Notifications](https://github.com/equivalent/thyme_ubuntu_notification) (using `send-notify`)
+
 License
 =======
 
