@@ -1,5 +1,5 @@
-require 'ruby-progressbar'
 require 'date'
+require 'ruby-progressbar'
 
 class Thyme
   VERSION = '0.0.14'
@@ -34,6 +34,10 @@ class Thyme
 
   def break!
     @break = true
+  end
+
+  def stop!
+    stop_timer(true)
   end
 
   def daemonize!
@@ -91,54 +95,70 @@ class Thyme
 
   def start_timer
     File.open(PID_FILE, "w") { |f| f.print(Process.pid) }
-    seconds_start = @break ? @timer_break : @timer
-    seconds_left = seconds_start + 1
+    seconds_total = @break ? @timer_break : @timer
+    seconds_left = seconds_total + 1
     start_time = DateTime.now
+    paused_time = nil
     min_length = (seconds_left / 60).floor.to_s.length
     tmux_file = File.open(TMUX_FILE, "w") if @tmux
     started = false
     bar = ENV['THYME_TEST'].nil? && !daemon? ?
       ProgressBar.create(
         title: format(seconds_left-1, min_length),
-        total: seconds_start,
+        total: seconds_total,
         length: 50,
         format: '[%B] %t') : nil
     while seconds_left > 0
-      seconds_passed = seconds_since(start_time)
-      seconds_left = [seconds_start - seconds_passed, 0].max
-      title = format(seconds_left, min_length)
-      fg = color(seconds_left)
-      if bar
-        bar.title = title
-        bar.progress = seconds_passed
+      begin
+        if paused_time
+          sleep(@interval)
+          next
+        end
+        seconds_passed = seconds_since(start_time)
+        seconds_left = [seconds_total - seconds_passed, 0].max
+        title = format(seconds_left, min_length)
+        fg = color(seconds_left)
+        if bar
+          bar.title = title
+          bar.progress = seconds_passed
+        end
+        if @tmux
+          tmux_file.truncate(0)
+          tmux_file.rewind
+          tmux_file.write(@tmux_theme % [fg, title])
+          tmux_file.flush
+        end
+        unless started
+          started = true
+          send_to_plugin :before
+        end
+        send_to_plugin :tick, seconds_left
+        sleep(@interval)
+      rescue SignalException => e
+        if e.signm == 'SIGUSR1' && paused_time.nil?
+          paused_time = DateTime.now
+        elsif e.signm == 'SIGUSR1'
+          delta = DateTime.now - paused_time
+          start_time += delta
+          paused_time = nil
+        else
+          puts ""
+          break
+        end
       end
-      if @tmux
-        tmux_file.truncate(0)
-        tmux_file.rewind
-        tmux_file.write(@tmux_theme % [fg, title])
-        tmux_file.flush
-      end
-      unless started
-        started = true
-        send_to_plugin :before
-      end
-      send_to_plugin :tick, seconds_left
-      sleep(@interval)
     end
-  rescue SignalException => e
-    puts ""
   ensure
     tmux_file.close if tmux_file
     File.delete(TMUX_FILE) if File.exists?(TMUX_FILE)
     File.delete(PID_FILE) if File.exists?(PID_FILE)
-    seconds_left = [seconds_start - seconds_since(start_time), 0].max
+    seconds_left = [seconds_total - seconds_since(start_time), 0].max
     send_to_plugin :after, seconds_left
   end
 
-  def stop_timer
+  def stop_timer(terminate = false)
     pid = File.read(PID_FILE).to_i
-    Process.kill('TERM', pid) if pid > 1
-  rescue Errno::ESRCH # process is already dead, cleanup files and restart
+    Process.kill(terminate ? 'TERM' : 'USR1', pid) if pid > 1
+  rescue Errno::ESRCH, Errno::ENOENT # process is already dead, cleanup files
     File.delete(TMUX_FILE) if File.exists?(TMUX_FILE)
     File.delete(PID_FILE) if File.exists?(PID_FILE)
   end

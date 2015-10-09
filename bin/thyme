@@ -11,6 +11,7 @@ ARGV.options do |o|
   o.on('-b', '--break', 'run break timer') { thyme.break! }
   o.on('-d', '--daemon', 'run in background') { thyme.daemonize! }
   o.on('-h', '--help', 'show this help message') { puts o; exit }
+  o.on('-s', '--stop', 'stops running timer') { thyme.stop!; exit }
   thyme.load_config(o)
   o.parse!
   thyme.run(true)

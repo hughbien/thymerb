@@ -121,6 +121,13 @@ You can create your own plugins.  They implement these methods:
 
 The `before`, `tick`, and `after` methods are all optional.
 
+TODO
+====
+
+* update website for breaks feature
+* add pause spacebar
+* add repeat feature
+
 License
 =======
 
