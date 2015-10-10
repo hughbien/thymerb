@@ -8,6 +8,9 @@ class Thyme
   TMUX_FILE = "#{ENV['HOME']}/.thyme-tmux"
   OPTIONS = [:interval, :timer, :timer_break, :tmux, :tmux_theme, :warning, :warning_color]
 
+  # expose attributes to plugins
+  attr_reader :break, :repeat, :repeat_index
+
   def initialize
     @break = false
     @break_color = 'default'
@@ -127,7 +130,13 @@ class Thyme
     File.exists?(PID_FILE)
   end
 
-  private
+  def first?
+    @repeat == 1 || (!@break && @repeat_index == 1)
+  end
+
+  def last?
+    @repeat_index == @repeat_count
+  end
 
   def repeat_subtitle
     if @repeat == 1
@@ -138,6 +147,8 @@ class Thyme
       "(#{@repeat_index}/#{@repeat})"
     end
   end
+
+  private
 
   def start_timer(tmux_file)
     seconds_total = @break ? @timer_break : @timer
