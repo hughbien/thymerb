@@ -10,13 +10,16 @@ class Thyme
 
   def initialize
     @break = false
+    @break_color = 'default'
     @interval = 1
+    @repeat = 1
+    @repeat_index = 1
     @timer = 25 * 60
     @timer_break = 5 * 60
     @tmux = false
     @tmux_theme = "#[default]#[fg=%s]%s#[default]" 
     @warning = 5 * 60
-    @warning_color = "red,bold"
+    @warning_color = 'red,bold'
     @plugins = []
   end
 
@@ -25,8 +28,37 @@ class Thyme
   end
 
   def run(force=false)
-    if force
-      running? ? stop_timer : start_timer
+    if force && running?
+      stop_timer
+    elsif force
+      begin
+        File.open(PID_FILE, "w") { |f| f.print(Process.pid) }
+        if @tmux
+          tmux_file = File.open(TMUX_FILE, "w")
+          tmux_file.truncate(0)
+          tmux_file.rewind
+          tmux_file.write('')
+          tmux_file.flush
+        end
+        if @repeat == 1
+          start_timer(tmux_file)
+        else
+          while @repeat_index <= @repeat || @repeat == 0
+            @break = false
+            start_timer(tmux_file)
+            if @repeat_index < @repeat || @repeat == 0
+              @break = true
+              start_timer(tmux_file)
+            end
+            @repeat_index += 1
+          end
+        end
+      rescue ThymeStopTimer
+        # stop signal received
+      ensure
+        File.delete(TMUX_FILE) if File.exists?(TMUX_FILE)
+        File.delete(PID_FILE) if File.exists?(PID_FILE)
+      end
     else
       @run = true
     end
@@ -47,6 +79,10 @@ class Thyme
 
   def daemon?
     !!@daemon
+  end
+
+  def repeat!(count = 0)
+    @repeat = count.to_i
   end
 
   def set(opt, val)
@@ -93,14 +129,22 @@ class Thyme
 
   private
 
-  def start_timer
-    File.open(PID_FILE, "w") { |f| f.print(Process.pid) }
+  def repeat_subtitle
+    if @repeat == 1
+      ''
+    elsif @repeat == 0
+      "(#{@repeat_index})"
+    else
+      "(#{@repeat_index}/#{@repeat})"
+    end
+  end
+
+  def start_timer(tmux_file)
     seconds_total = @break ? @timer_break : @timer
     seconds_left = seconds_total + 1
     start_time = DateTime.now
     paused_time = nil
     min_length = (seconds_left / 60).floor.to_s.length
-    tmux_file = File.open(TMUX_FILE, "w") if @tmux
     started = false
     bar = ENV['THYME_TEST'].nil? && !daemon? ?
       ProgressBar.create(
@@ -143,14 +187,11 @@ class Thyme
           paused_time = nil
         else
           puts ""
-          break
+          raise ThymeStopTimer
         end
       end
     end
   ensure
-    tmux_file.close if tmux_file
-    File.delete(TMUX_FILE) if File.exists?(TMUX_FILE)
-    File.delete(PID_FILE) if File.exists?(PID_FILE)
     seconds_left = [seconds_total - seconds_since(start_time), 0].max
     send_to_plugin :after, seconds_left
   end
@@ -190,16 +231,23 @@ class Thyme
     sec = (seconds % 60).floor
     sec = "0#{sec}" if sec.to_s.length == 1
     @interval < 60 ?
-      "#{lead}#{min}:#{sec}" :
-      "#{lead}#{min}m"
+      "#{lead}#{min}:#{sec} #{repeat_subtitle}" :
+      "#{lead}#{min}m #{repeat_subtitle}"
   end
 
   def color(seconds)
-    !@break && seconds < @warning ? @warning_color : 'default'
+    if @break
+      @break_color
+    elsif seconds < @warning
+      @warning_color
+    else
+      'default'
+    end
   end
 end
 
 class ThymeError < StandardError; end;
+class ThymeStopTimer < StandardError; end;
 
 class ThymeHooksPlugin
   def initialize(app)
