@@ -124,9 +124,9 @@ The `before`, `tick`, and `after` methods are all optional.
 TODO
 ====
 
-* add repeat feature (pass count to hooks)
-* add pause spacebar
-* update website for breaks, break color, pause, and repeat
+* add `before(:all)` and `after(:all)`, verify it works on interrupt
+* refactor
+* update website for breaks, break color, hooks, pause, repeat
 
 License
 =======

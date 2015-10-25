@@ -135,7 +135,7 @@ class Thyme
   end
 
   def last?
-    @repeat_index == @repeat_count
+    @repeat == @repeat_index
   end
 
   def repeat_subtitle
@@ -157,12 +157,13 @@ class Thyme
     paused_time = nil
     min_length = (seconds_left / 60).floor.to_s.length
     started = false
-    bar = ENV['THYME_TEST'].nil? && !daemon? ?
+    @bar ||= ENV['THYME_TEST'].nil? && !daemon? ?
       ProgressBar.create(
         title: format(seconds_left-1, min_length),
         total: seconds_total,
         length: 50,
         format: '[%B] %t') : nil
+    @bar.reset if @bar
     while seconds_left > 0
       begin
         if paused_time
@@ -173,9 +174,13 @@ class Thyme
         seconds_left = [seconds_total - seconds_passed, 0].max
         title = format(seconds_left, min_length)
         fg = color(seconds_left)
-        if bar
-          bar.title = title
-          bar.progress = seconds_passed
+        if @bar
+          @bar.title = title
+          if seconds_left == 0 && !last?
+            @bar.progress = seconds_passed - 0.01 # prevent bar from finishing
+          else
+            @bar.progress = seconds_passed
+          end
         end
         if @tmux
           tmux_file.truncate(0)
@@ -242,8 +247,8 @@ class Thyme
     sec = (seconds % 60).floor
     sec = "0#{sec}" if sec.to_s.length == 1
     @interval < 60 ?
-      "#{lead}#{min}:#{sec} #{repeat_subtitle}" :
-      "#{lead}#{min}m #{repeat_subtitle}"
+      "#{lead}#{min}:#{sec} #{repeat_subtitle}".strip :
+      "#{lead}#{min}m #{repeat_subtitle}".strip
   end
 
   def color(seconds)
