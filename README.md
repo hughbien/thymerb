@@ -124,7 +124,6 @@ The `before`, `tick`, and `after` methods are all optional.
 TODO
 ====
 
-* add `before(:all)` and `after(:all)`, verify it works on interrupt
 * refactor
 * update website for breaks, break color, hooks, pause, repeat
 

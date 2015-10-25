@@ -93,12 +93,14 @@ class Thyme
     self.instance_variable_set("@#{opt}", val)
   end
 
-  def before(&block)
-    hooks_plugin.add(:before, &block)
+  def before(kind = :each, &block)
+    type = kind == :all ? :before_all : :before
+    hooks_plugin.add(type, &block)
   end
 
-  def after(&block)
-    hooks_plugin.add(:after, &block)
+  def after(kind = :each, &block)
+    type = kind == :all ? :after_all : :after
+    hooks_plugin.add(type, &block)
   end
 
   def tick(&block)
@@ -118,8 +120,8 @@ class Thyme
     environment = Class.new do
       define_method(:set) { |opt,val| app.set(opt,val) }
       define_method(:use) { |plugin,*args,&b| app.use(plugin,*args,&b) }
-      define_method(:before) { |&block| app.before(&block) }
-      define_method(:after) { |&block| app.after(&block) }
+      define_method(:before) { |*args,&block| app.before(*args,&block) }
+      define_method(:after) { |*args,&block| app.after(*args,&block) }
       define_method(:tick) { |&block| app.tick(&block) }
       define_method(:option) { |sh,lo,desc,&b| app.option(optparse,sh,lo,desc,&b) }
     end.new
@@ -190,9 +192,10 @@ class Thyme
         end
         unless started
           started = true
-          send_to_plugin :before
+          send_to_plugin(:before_all) if first?
+          send_to_plugin(:before)
         end
-        send_to_plugin :tick, seconds_left
+        send_to_plugin(:tick, seconds_left)
         sleep(@interval)
       rescue SignalException => e
         if e.signm == 'SIGUSR1' && paused_time.nil?
@@ -203,13 +206,15 @@ class Thyme
           paused_time = nil
         else
           puts ""
+          @interrupted = true
           raise ThymeStopTimer
         end
       end
     end
   ensure
     seconds_left = [seconds_total - seconds_since(start_time), 0].max
-    send_to_plugin :after, seconds_left
+    send_to_plugin(:after, seconds_left)
+    send_to_plugin(:after_all, seconds_left) if @interrupted || last?
   end
 
   def stop_timer(terminate = false)
@@ -268,11 +273,15 @@ class ThymeStopTimer < StandardError; end;
 class ThymeHooksPlugin
   def initialize(app)
     @app = app
-    @hooks = {before: [], tick: [], after: []}
+    @hooks = {before_all: [], before: [], tick: [], after: [], after_all: []}
   end
 
   def add(type, &block)
     @hooks[type] << block
+  end
+
+  def before_all
+    @hooks[:before_all].each { |b| @app.instance_exec(&b) }
   end
 
   def before
@@ -285,5 +294,9 @@ class ThymeHooksPlugin
 
   def after(seconds_left)
     @hooks[:after].each { |a| @app.instance_exec(seconds_left, &a) }
+  end
+
+  def after_all(seconds_left)
+    @hooks[:after_all].each { |a| @app.instance_exec(seconds_left, &a) }
   end
 end
