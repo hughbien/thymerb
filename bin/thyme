@@ -1,19 +1,19 @@
 #!/usr/bin/env ruby
 require 'optparse'
-require File.expand_path('thyme', File.join(File.dirname(__FILE__), '..', 'lib'))
+require_relative '../lib/thyme'
 
 $0 = 'thyme'
 ARGV.options do |o|
-  thyme = Thyme.new
+  thyme = Thyme::Console.new
   o.set_summary_indent('  ')
-  o.banner =    "Usage: #{File.basename($0)} [OPTION]"
+  o.banner = "Usage: #{File.basename($0)} [OPTION]"
   o.define_head "Timer for Pomodoro Technique"
   o.on('-b', '--break', 'run break timer') { thyme.break! }
   o.on('-d', '--daemon', 'run in background') { thyme.daemonize! }
   o.on('-h', '--help', 'show this help message') { puts o; exit }
   o.on('-r', '--repeat [COUNT]', 'repeat timer') { |count| thyme.repeat!(count) }
-  o.on('-s', '--stop', 'stops running timer') { thyme.stop!; exit }
-  thyme.load_config(o)
+  o.on('-s', '--stop', 'stops running timer') { thyme.stop; exit }
+  thyme.load(o)
   o.parse!
-  thyme.run(true)
+  thyme.run
 end

@@ -125,6 +125,7 @@ TODO
 ====
 
 * refactor
+* extract tmux, progressbar to plugin
 * update website for breaks, break color, hooks, pause, repeat
 
 License
