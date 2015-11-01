@@ -96,7 +96,7 @@ module Thyme
     ensure
       seconds_left = [seconds_total - @format.seconds_since(start_time), 0].max
       @config.send_to_plugin(:after, seconds_left)
-      @config.send_to_plugin(:after_all, seconds_left) if @interrupted || last?
+      @config.send_to_plugin(:after_all) if @interrupted || last?
     end
 
     def first?
@@ -111,8 +111,8 @@ module Thyme
       pid = File.read(Config::PID_FILE).to_i
       Process.kill(signal, pid) if pid > 1
     rescue Errno::ESRCH, Errno::ENOENT # process is already dead, cleanup files
-      File.delete(Config::TMUX_FILE) if File.exists?(TMUX_FILE)
-      File.delete(Config::PID_FILE) if File.exists?(PID_FILE)
+      File.delete(Config::TMUX_FILE) if File.exists?(Config::TMUX_FILE)
+      File.delete(Config::PID_FILE) if File.exists?(Config::PID_FILE)
     ensure
       true
     end

@@ -25,8 +25,8 @@ module Thyme
       @hooks[:after].each { |a| @config.instance_exec(seconds_left, &a) }
     end
 
-    def after_all(seconds_left)
-      @hooks[:after_all].each { |a| @config.instance_exec(seconds_left, &a) }
+    def after_all
+      @hooks[:after_all].each { |a| @config.instance_exec(&a) }
     end
   end
 end

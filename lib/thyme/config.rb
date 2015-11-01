@@ -63,10 +63,12 @@ module Thyme
 
     def send_to_plugin(message, *args)
       @plugins.each do |plugin|
-        plugin.public_send(message, *args) if plugin.respond_to?(message)
+        begin
+          plugin.public_send(message, *args) if plugin.respond_to?(message)
+        rescue
+          $stderr.puts "Exception raised from #{plugin.class}:", $!, $@
+        end
       end
-    rescue
-      $stderr.puts "Exception raised from #{plugin.class}:", $!, $@
     end
   end
 end

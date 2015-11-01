@@ -1,10 +1,15 @@
-require File.expand_path('thyme', File.join(File.dirname(__FILE__), 'lib'))
+require_relative 'lib/thyme/version'
+require 'rake/testtask'
 
 task :default => :test
 
 desc 'Run tests'
 task :test do
-  ruby 'test/*_test.rb'
+  if file = ENV['TEST']
+    File.exists?(file) ? require_relative(file) : puts("#{file} doesn't exist")
+  else
+    Dir.glob('./test/*_test.rb').each { |file| require(file) }
+  end
 end
 
 desc 'Build gem'

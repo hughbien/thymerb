@@ -1,5 +1,7 @@
 module Thyme
   class Console
+    attr_accessor :config
+
     def initialize
       @config = Config.new
     end
@@ -10,7 +12,7 @@ module Thyme
 
     def daemonize!
       @config.daemon = true
-      Process.daemon
+      Process.daemon if !ENV['THYME_TEST']
     end
 
     def repeat!(count = 0)
@@ -25,8 +27,8 @@ module Thyme
       timer.run
     end
 
-    def load(optparse)
-      return if !File.exists?(Config::CONFIG_FILE)
+    def load(optparse, &block)
+      return if block.nil? && !File.exists?(Config::CONFIG_FILE)
       config = @config
       environment = Class.new do
         define_method(:set) { |opt,val| config.set(opt,val) }
@@ -36,7 +38,12 @@ module Thyme
         define_method(:tick) { |&block| config.tick(&block) }
         define_method(:option) { |sh,lo,desc,&b| config.option(optparse,sh,lo,desc,&b) }
       end.new
-      environment.instance_eval(File.read(Config::CONFIG_FILE), Config::CONFIG_FILE)
+
+      if block # for test environment
+        environment.instance_eval(&block)
+      else
+        environment.instance_eval(File.read(Config::CONFIG_FILE), Config::CONFIG_FILE)
+      end
     end
 
     private

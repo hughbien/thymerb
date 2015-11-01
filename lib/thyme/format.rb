@@ -10,12 +10,12 @@ module Thyme
 
     def time_left(seconds, min_length)
       min = (seconds / 60).floor
-      lead = ' ' * (min_length - min.to_s.length)
+      lead = ' ' * [0, min_length - min.to_s.length].max
       sec = (seconds % 60).floor
       sec = "0#{sec}" if sec.to_s.length == 1
       @config.interval < 60 ?
-        "#{lead}#{min}:#{sec} #{repeat_subtitle}".strip :
-        "#{lead}#{min}m #{repeat_subtitle}".strip
+        "#{lead}#{min}:#{sec} #{repeat_subtitle}".sub(/\s*$/, '') :
+        "#{lead}#{min}m #{repeat_subtitle}".sub(/\s*$/, '')
     end
 
     def repeat_subtitle
