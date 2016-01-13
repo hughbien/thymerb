@@ -1,4 +1,5 @@
 module Thyme
+  # Methods used to nicely format output to the user
   class Format
     def initialize(config)
       @config = config
@@ -8,6 +9,7 @@ module Thyme
       ((DateTime.now - time) * 24 * 60 * 60).to_i
     end
 
+    # Displays time depending on configured interval eg. 15m OR 15:20
     def time_left(seconds, min_length)
       min = (seconds / 60).floor
       lead = ' ' * [0, min_length - min.to_s.length].max

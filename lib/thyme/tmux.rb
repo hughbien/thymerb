@@ -1,4 +1,6 @@
 module Thyme
+  # Provides tmux integration. Thyme outputs the timer to TMUX_FILE. Tmux reads this file and
+  # outputs to its bar.
   class Tmux
     def initialize(config)
       @config = config

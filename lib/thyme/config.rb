@@ -1,4 +1,6 @@
 module Thyme
+  # Configure state for the application. This can be done via the thymerc file or CLI flags.
+  # Public methods in this file are exposed to the thymerc file.
   class Config
     CONFIG_FILE = "#{ENV['HOME']}/.thymerc"
     PID_FILE = "#{ENV['HOME']}/.thyme-pid"

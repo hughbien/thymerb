@@ -1,4 +1,5 @@
 module Thyme
+  # Generic plugin for users to run Ruby code in Thyme event callbacks in thymerc
   class HooksPlugin
     def initialize(config)
       @config = config

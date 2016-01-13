@@ -1,4 +1,5 @@
 module Thyme
+  # Exposes application to the CLI in bin/thyme
   class Console
     attr_accessor :config
 
@@ -27,6 +28,7 @@ module Thyme
       timer.run
     end
 
+    # Loads the thymerc configuration file. Requires optparse b/c users can extend CLI via thymerc
     def load(optparse, &block)
       return if block.nil? && !File.exists?(Config::CONFIG_FILE)
       config = @config

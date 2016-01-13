@@ -1,4 +1,5 @@
 module Thyme
+  # The actual timer logic where you can pause, unpause, or stop one or more timers
   class Timer
     def initialize(config)
       @config = config
@@ -40,6 +41,7 @@ module Thyme
 
     private
 
+    # TODO: refactor this method, too large!
     def run_single
       seconds_total = @config.break ? @config.timer_break : @config.timer
       seconds_left = seconds_total + 1
@@ -107,6 +109,8 @@ module Thyme
       @config.repeat == @config.repeat_index
     end
 
+    # Since timers can be daemonized, we'll use Unix signals to trigger events such as
+    # pause/unpause in a separate process.
     def send_signal(signal)
       pid = File.read(Config::PID_FILE).to_i
       Process.kill(signal, pid) if pid > 1
