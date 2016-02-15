@@ -65,6 +65,11 @@ module Thyme
           seconds_passed = @format.seconds_since(start_time)
           seconds_left = [seconds_total - seconds_passed, 0].max
           title = @format.time_left(seconds_left, min_length)
+
+          if @config.description
+            title = title + " #{@config.description}"
+          end
+
           if @bar
             @bar.title = title
             if seconds_left == 0 && !last?
