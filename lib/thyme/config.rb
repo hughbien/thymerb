@@ -7,7 +7,7 @@ module Thyme
     TMUX_FILE = "#{ENV['HOME']}/.thyme-tmux"
     OPTIONS = [:break_color, :interval, :timer, :timer_break, :tmux, :tmux_theme, :warning, :warning_color]
     OPTIONS.each { |opt| attr_reader(opt) }
-    attr_accessor :break, :daemon, :repeat, :repeat_index
+    attr_accessor :break, :daemon, :repeat, :repeat_index, :description
 
     def initialize
       # options set via config file
@@ -29,6 +29,7 @@ module Thyme
       @daemon = false
       @repeat = 1
       @repeat_index = 1
+      @description = nil
     end
 
     def set(opt, val)

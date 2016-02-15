@@ -16,6 +16,10 @@ module Thyme
       Process.daemon if !ENV['THYME_TEST']
     end
 
+    def description(d='')
+      @config.description = d
+    end
+
     def repeat!(count = 0)
       @config.repeat = count.to_i
     end

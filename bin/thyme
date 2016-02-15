@@ -10,6 +10,7 @@ ARGV.options do |o|
   o.define_head "Timer for Pomodoro Technique"
   o.on('-b', '--break', 'run break timer') { thyme.break! }
   o.on('-d', '--daemon', 'run in background') { thyme.daemonize! }
+  o.on('-D', '--description [DESCRIPTION]', 'description') { |d| thyme.description(d) }
   o.on('-h', '--help', 'show this help message') { puts o; exit }
   o.on('-r', '--repeat [COUNT]', 'repeat timer') { |count| thyme.repeat!(count) }
   o.on('-s', '--stop', 'stops running timer') { thyme.stop; exit }
