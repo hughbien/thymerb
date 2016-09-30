@@ -58,7 +58,8 @@ class ConfigTest < Minitest::Test
 
   def test_option
     opt = OptionParser.new
-    @config.option(opt, 't', 'thyme', 'new option') { }
+    @config.optparse = opt
+    @config.option('t', 'thyme', 'new option') { }
     assert_match(/ -t/, opt.to_s)
     assert_match(/ --thyme/, opt.to_s)
     assert_match(/ new option/, opt.to_s)
