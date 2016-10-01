@@ -99,6 +99,11 @@ You can create your own plugins. They implement these methods:
     class MyThymePlugin
       def initialize(thyme, options={})
         # `thyme` is an instance of Thyme::Config (see lib/thyme/config.rb)
+
+        # adds `-t --today` option, which opens a text file in vim
+        thyme.option :t, :today, 'open today sheet' do
+          `vim -O ~/.thyme-today.md ~/.thyme-records.md < \`tty\` > \`tty\``
+        end
       end
 
       def before_all
