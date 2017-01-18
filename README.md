@@ -113,7 +113,7 @@ You can create your own plugins. They implement these methods:
         # code to run each tick
       end
 
-      def after(seconds_left)
+      def after
         # code to run when timer stops
       end
 
