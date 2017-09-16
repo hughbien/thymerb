@@ -47,7 +47,7 @@ Configurations live in the `~/.thymerc` file:
     # adds `-s --seconds num` option, which allows on the fly timer
     option :s, 'seconds num', 'run with custom seconds' do |num|
       set :timer, num.to_i
-      run
+      @run = true
     end
 
     # execute hook before thyme program starts
