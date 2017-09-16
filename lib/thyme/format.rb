@@ -36,7 +36,7 @@ module Thyme
       elsif seconds < @config.warning
         @config.warning_color
       else
-        'default'
+        @config.default_color
       end
     end
   end

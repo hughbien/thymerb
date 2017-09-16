@@ -5,13 +5,14 @@ module Thyme
     CONFIG_FILE = "#{ENV['HOME']}/.thymerc"
     PID_FILE = "#{ENV['HOME']}/.thyme-pid"
     TMUX_FILE = "#{ENV['HOME']}/.thyme-tmux"
-    OPTIONS = [:break_color, :interval, :timer, :timer_break, :tmux, :tmux_theme, :warning, :warning_color]
+    OPTIONS = [:default_color, :break_color, :interval, :timer, :timer_break, :tmux, :tmux_theme, :warning, :warning_color]
     OPTIONS.each { |opt| attr_reader(opt) }
     attr_accessor :break, :daemon, :repeat, :repeat_index, :optparse
 
     def initialize
       # options set via config file
       @break_color = 'default'
+      @default_color = 'default'
       @interval = 1
       @timer = 25 * 60
       @timer_break = 5 * 60
