@@ -32,13 +32,14 @@ module Thyme
     def load(optparse, &block)
       return if block.nil? && !File.exists?(Config::CONFIG_FILE)
       config = @config
+      config.optparse = optparse
       environment = Class.new do
         define_method(:set) { |opt,val| config.set(opt,val) }
         define_method(:use) { |plugin,*args,&b| config.use(plugin,*args,&b) }
         define_method(:before) { |*args,&block| config.before(*args,&block) }
         define_method(:after) { |*args,&block| config.after(*args,&block) }
         define_method(:tick) { |&block| config.tick(&block) }
-        define_method(:option) { |sh,lo,desc,&b| config.option(optparse,sh,lo,desc,&b) }
+        define_method(:option) { |sh,lo,desc,&b| config.option(sh,lo,desc,&b) }
       end.new
 
       if block # for test environment

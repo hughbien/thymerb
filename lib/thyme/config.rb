@@ -7,7 +7,7 @@ module Thyme
     TMUX_FILE = "#{ENV['HOME']}/.thyme-tmux"
     OPTIONS = [:break_color, :interval, :timer, :timer_break, :tmux, :tmux_theme, :warning, :warning_color]
     OPTIONS.each { |opt| attr_reader(opt) }
-    attr_accessor :break, :daemon, :repeat, :repeat_index
+    attr_accessor :break, :daemon, :repeat, :repeat_index, :optparse
 
     def initialize
       # options set via config file
@@ -56,8 +56,9 @@ module Thyme
       @hooks_plugin.add(:tick, &block)
     end
 
-    def option(optparse, short, long, desc, &block)
-      optparse.on("-#{short}", "--#{long}", desc) do |*args|
+    def option(short, long, desc, &block)
+      return if !@optparse
+      @optparse.on("-#{short}", "--#{long}", desc) do |*args|
         self.instance_exec(*args, &block)
         exit if !@run
       end
